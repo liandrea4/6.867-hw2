@@ -7,11 +7,16 @@ import sys
 import pylab as pl
 ###Loss Functions####
 
-def logistic_loss(x, y, w, w0):
+def logistic_loss(x, y, w):
+	w0 = w[0]
+	weight = w[1:len(w)]
 	cumulative_sum = 0
+
+	print len(w)
+	print "weight length", len(weight)
 	for i in range(len(x)):
 		
-		inner_term = -y[i] * (numpy.dot(w, x[i]) + w0)
+		inner_term = -y[i] * (numpy.dot(weight, x[i]) + w0)
 		term = 1 + numpy.exp(inner_term)
 		log_term = numpy.log(term)
 		cumulative_sum += log_term
@@ -20,16 +25,17 @@ def logistic_loss(x, y, w, w0):
 	return cumulative_sum[0]
 
 def L2_regularization(w):
+	weight = w[1: len(w)]
 	cum_sum = 0
-	for i in range(len(w)):
-		cum_sum += w[i]**2
+	for i in range(len(weight)):
+		cum_sum += weight[i]**2
 
 	print "cumsum", cum_sum
 	return cum_sum**(0.5)
 
-def create_L2_logistic_objective(x, y, w0, reg_parameter):
+def create_L2_logistic_objective(x, y, reg_parameter):
 	def L2_logistic_objective(w):
-		return logistic_loss(x, y, w, w0) + numpy.dot(reg_parameter, L2_regularization(w)**2)
+		return logistic_loss(x, y, w) + numpy.dot(reg_parameter, L2_regularization(w)**2)
 
 	return L2_logistic_objective
 
@@ -43,7 +49,7 @@ if __name__ == '__main__':
 	X = train[:,0:2]
 	Y = train[:,2:3]
 
-	weight_vector_length = len(X[0])
+	weight_vector_length = len(X[0])+1
 	w0 = 0.0
 	reg_parameter = 0
 
@@ -58,7 +64,7 @@ if __name__ == '__main__':
 
 	# Carry out training.
 
-	objective_f = create_L2_logistic_objective(X, Y, w0, reg_parameter)
+	objective_f = create_L2_logistic_objective(X, Y, reg_parameter)
 
 
 	gradient_f = make_numeric_gradient_calculator(objective_f, 0.001)

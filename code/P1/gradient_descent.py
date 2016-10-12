@@ -32,9 +32,8 @@ def plot_gradient_descent(objective_f, previous_values):
 
 
     # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
-    objective_y = [ objective_f(numpy.array([x_i, x_i])) for x_i in objective_x ]
-    plt.plot(objective_x, objective_y, 'b-', linewidth=2)
-    plt.title("Negative gaussian, starting guess: -65", fontsize=20)
+    # objective_y = [ objective_f(numpy.array([x_i, x_i, x_i])) for x_i in objective_x ]
+    # plt.plot(objective_x, objective_y, 'b-', linewidth=2)
 
 
     plt.show()
