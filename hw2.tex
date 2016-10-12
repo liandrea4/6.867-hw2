@@ -85,6 +85,39 @@ and in the case of L2 regularization,
 $$|w| = |w|_2 = \sqrt{w_1^2 + ... + w_n^2}$$
 Gradient descent was run with this objective function on the training dataset \texttt{data1\_train.csv} with $\lambda=0$. Interestingly, as the number of gradient descent iterations, controlled by the step size and the convergence criterion, increased, the weight vector \_\_\_\_\_\_
 
+\subsection{L1 regularization}
+In the case of L1 regularization, we get that in the above equation,
+$$|w| = |w|_1 = \sum_{i=1}^n |w_i|$$
+We can evaluate the different regularization techniques under different values of $\lambda$ in the context of the weight vectors, the decision boundary, and the classification error rate in each of the training data sets.
+
+\subsubsection{Weight vector}
+
+\subsubsection{Decision boundary}
+
+\subsubsection{Classification error rate}
+
+\subsection{Optimization}
+By using the training and validation data sets, we can identify the best regularizer and value for $\lambda$ for each of the four data sets. These results are presented in Table 1.
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | }
+      \hline
+      Dataset & Best regularizer & Best $\lambda$ & Test performance \\ \hline
+      1       & 5                & 6              & 1 \\ \hline
+      2       & 5                & 6              & 1 \\ \hline
+      3       & 5                & 6              & 1 \\ \hline
+      4       & 5                & 6              & 1 \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Optimal regularizer and $\lambda$ for datasets}
+\end{table}
+
+\section{Support Vector Machine}
+
+\section{Pegasos}
+
+\section{Handwritten digit recognition}
+
 
 
 \end{document}
