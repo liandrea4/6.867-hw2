@@ -50,16 +50,6 @@ def solve_dual_svm_slack(x, y, C):
   xvals = np.array(solution['x'])
   return xvals
 
-def get_classification_error_rate(alpha_vals, C, threshold):
-  num_errors = 0
-  for alpha in alpha_vals:
-    if abs(alpha - C) < threshold:
-      num_errors += 1
-  return float(num_errors) / len(alpha_vals)
-
-
-
-
 data = [
   (2,2),
   (2,3),
