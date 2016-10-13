@@ -113,6 +113,145 @@ By using the training and validation data sets, we can identify the best regular
 \end{table}
 
 \section{Support Vector Machine}
+We here implement a dual form of linear SVMs with slack variables. More specifically, we solve the following optimization problem with respect to $\alpha$:
+$$\max_\alpha -\frac{1}{2}|\sum_i \alpha_i y^{(i)} x^{(i)}|^2 + \sum_i \alpha_i$$
+$$\text{s.t.} \sum_i \alpha_i y^{(i)} = 0$$
+$$0 \leq \alpha_i \leq C, 1 \leq i \leq n$$
+Written another way, this maximization problem can be framed as a minimiation problem:
+$$\min_\alpha \frac{1}{2} x^T P x + q^T x$$
+$$\text{s.t.} G x \leq h$$
+$$ Ax = b $$
+where $b=0$ and
+$$x=
+\begin{bmatrix}
+  \alpha_0 \\
+  \alpha_1 \\
+  \vdots      \\
+  \alpha_n \\
+\end{bmatrix},
+q=
+\begin{bmatrix}
+  -1 \\
+  -1 \\
+  \vdots \\
+  -1 \\
+\end{bmatrix},
+A^T=
+\begin{bmatrix}
+  y_0 \\
+  y_1 \\
+  \vdots \\
+  y_{n-1} \\
+\end{bmatrix},
+G=
+\begin{bmatrix}
+  I \\
+  -I \\
+\end{bmatrix},
+$$
+where $I$ and $-I$ are the identity and negative identity matrix respectively. Furthermore,
+$$
+P=
+\begin{bmatrix}
+  x_0^2 y_0^2             & x_0 y_0 x_1 y_1         & \dots  & x_0 y_0 x_{n-1} y_{n-1}\\
+  x_1 y_1 x_0 y_0         & x_1^2 y_1^2             & \dots  & x_1 y_1 x_{n-1} y_{n-1}\\
+  \vdots                  & \vdots                  & \ddots & \vdots \\
+  x_{n-1} y_{n-1} x_0 y_0 & x_{n-1} y_{n-1} x_1 y_1 & \dots  & x_{n-1}^2 y_{n-1}^2\\
+\end{bmatrix}
+$$
+$$
+h^T=
+\begin{bmatrix}
+  C & \dots & C & 0 & \dots & 0 \\
+\end{bmatrix}
+$$
+In the context of the four-point 2D problem, we seek to solve the following optimization:
+$$\min_\alpha \frac{1}{2}
+\begin{bmatrix}
+  \alpha_0 \\
+  \alpha_1 \\
+  \alpha_2 \\
+  \alpha_3 \\
+\end{bmatrix}^T
+\begin{bmatrix}
+  16 & 24 & 0 & 24 \\
+  24 & 36 & 0 & 36 \\
+  0  & 0  & 0 & 0 \\
+  24 & 36 & 0 & 36 \\
+\end{bmatrix}
+\begin{bmatrix}
+  \alpha_0 \\
+  \alpha_1 \\
+  \alpha_2 \\
+  \alpha_3 \\
+\end{bmatrix}
++
+\begin{bmatrix}
+  -1 \\
+  -1 \\
+  -1 \\
+  -1 \\
+\end{bmatrix}^T
+\begin{bmatrix}
+  \alpha_0 \\
+  \alpha_1 \\
+  \alpha_2 \\
+  \alpha_3 \\
+\end{bmatrix}
+$$
+$$\text{s.t.}
+\begin{bmatrix}
+  1 & 0 & 0 & 0 \\
+  0 & 1 & 0 & 0 \\
+  0 & 0 & 1 & 0 \\
+  0 & 0 & 0 & 1 \\
+  -1 & 0 & 0 & 0 \\
+  0 & -1 & 0 & 0 \\
+  0 & 0 & -1 & 0 \\
+  0 & 0 & 0 & -1 \\
+\end{bmatrix}
+\begin{bmatrix}
+  \alpha_0 \\
+  \alpha_1 \\
+  \alpha_2 \\
+  \alpha_3 \\
+\end{bmatrix}
+\leq
+\begin{bmatrix}
+  C \\
+  C \\
+  C \\
+  C \\
+  0 \\
+  0 \\
+  0 \\
+  0 \\
+\end{bmatrix},
+\begin{bmatrix}
+  2 \\
+  3 \\
+  -1 \\
+  -2 \\
+\end{bmatrix}
+\begin{bmatrix}
+  \alpha_0 \\
+  \alpha_1 \\
+  \alpha_2 \\
+  \alpha_3 \\
+\end{bmatrix}
+= 0 $$
+
+Solving for $x$ when $C=1$, we get that $
+\begin{bmatrix}
+  \alpha_0 & \alpha_1 & \alpha_2 & \alpha_3
+\end{bmatrix}^T
+=
+\begin{bmatrix}
+  0.1875 & 0 & 0.3750 & 0 &
+\end{bmatrix}^T
+$. This indicates that the first and third samples are support vectors because $0 \leq \alpha_i \leq C$.
+
+
 
 \section{Pegasos}
 
