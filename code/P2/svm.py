@@ -1,5 +1,8 @@
-import numpy as np
-from cvxopt import matrix, solvers
+import numpy     as np
+from cvxopt      import matrix, solvers
+import math
+
+###### SVM with slack ######
 
 def get_G_np(x, y):
   G_array = []
@@ -38,25 +41,65 @@ def solve_dual_svm_slack(x, y, C):
   A = matrix(A_np, (1, len(y)))
   b = matrix(0., (1, 1))
 
-  # print "P: ", P
-  # print "q: ", q
-  # print "G: ", G
-  # print "h: ", h
-  # print "A: ", A
-  # print "b: ", b
-
-  # find solution
   solution = solvers.qp(P, q, G, h, A, b)
   xvals = np.array(solution['x'])
   return xvals
 
-data = [
-  (2,2),
-  (2,3),
-  (0,-1),
-  (-3,-2)
-]
-x = [ point[0] for point in data ]
-y = [ point[1] for point in data ]
 
-# print solve_dual_svm_slack(x, y, 1)
+###### SVM with kernels ######
+def linear_kernel_fn(x_i, x_j):
+  return np.dot(x_i, x_j)
+
+def make_gaussian_rbf_kernel_fn(gamma):
+  def gaussian_rbf_kernel_fn(x_i, x_j):
+    magnitude = np.linalg.norm(x_i - x_j) ** 2
+    return math.exp(-1 * gamma * magnitude)
+  return gaussian_rbf_kernel_fn
+
+
+def solve_dual_svm_kernel(x, y, C, kernel_fn, K_hat_matrix=None):
+  if K_hat_matrix is not None:
+    P_np = K_hat_matrix
+  else:
+    P_np = np.array([float(kernel_fn(x[i], x[j]) * y[i] * y[j]) for i in range(len(x)) for j in range(len(x))])
+
+  A_np = np.array([float(y_i) for y_i in y ])
+  G_np = get_G_np(x, y)
+  h_np = get_h_np(x, y, C)
+
+  P = matrix(P_np, (len(x), len(y)))
+  q = matrix(-1., (len(x), 1))
+  G = matrix(G_np, (2*len(x), len(x)))
+  h = matrix(h_np, (2*len(x),1))
+  A = matrix(A_np, (1, len(y)))
+  b = matrix(0., (1, 1))
+
+  solution = solvers.qp(P, q, G, h, A, b)
+  xvals = np.array(solution['x'])
+  return xvals
+
+
+if __name__ == '__main__':
+  C = 1.
+
+  ###### Dual form SVM with slack ######
+
+  data = [
+    (2,2),
+    (2,3),
+    (0,-1),
+    (-3,-2)
+  ]
+  x = [ point[0] for point in data ]
+  y = [ point[1] for point in data ]
+
+  # print solve_dual_svm_slack(x, y, C)
+
+  ###### Dual form SVM with kernel ######
+  gamma = 1.
+
+  radial_basis_fn = make_gaussian_rbf_kernel_fn(gamma)
+  print solve_dual_svm_kernel(x, y, C, radial_basis_fn)
+
+
+
