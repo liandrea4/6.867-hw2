@@ -66,7 +66,7 @@ if __name__ == '__main__':
 	Y = train[:,2:3]
 
 	weight_vector_length = len(X[0])+1
-	w0 = 0.0
+	
 	reg_parameter = 1
 
 
@@ -75,18 +75,21 @@ if __name__ == '__main__':
 
 	# Parameters for logistic regression
 
-	step_size = 0.01
+	step_size = 0.05
 	threshold = 0.001
 
 	#### Sk Learn Logistic Regression #######
 
-	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.001, C = 1.0)
-	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.001, C = 1.0)
+	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.001, C = 1)
+	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.001, C = 1)
 
+	L1_logistic_regressor.fit(X, Y)
+	print "L1 weights", L1_logistic_regressor.coef_
+	print "L1 error rate", L1_logistic_regressor.score(X, Y)
 
 	L2_logistic_regressor.fit(X, Y)
-	print "weights", L2_logistic_regressor.coef_
-	print "error rate", L2_logistic_regressor.score(X, Y)
+	print "L2 weights", L2_logistic_regressor.coef_
+	print "L2 error rate", L2_logistic_regressor.score(X, Y)
 
 	# Carry out training.
 	##### Our own gradient descent #####
