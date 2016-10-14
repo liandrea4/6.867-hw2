@@ -31,6 +31,9 @@ var/
 *.spec
 *.pyc
 
+# Mac files
+.DS_Store
+
 # Latex files
 *.aux
 *.out
