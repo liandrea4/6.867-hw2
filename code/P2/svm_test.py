@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
   alpha_vals, weight_vector = train_model(x_training, y_training, file_num, C, threshold)
   b = calculate_b(weight_vector, x_training, y_training, alpha_vals, C, threshold, b_threshold)
-  plotDecisionBoundary(x_training, y_training, predict_svm, [-1, 0, 1], weight_vector, b, title = 'SVM Training')
+  plotDecisionBoundary(x_training, y_training, predict_svm, [-1, 0, 1], weight_vector, b, title = 'SVM Training, data' + str(file_num))
 
   training_error_rate = get_classification_error_rate(x_training, y_training, weight_vector, b)
   print "training_error_rate: ", training_error_rate
@@ -75,7 +75,7 @@ if __name__ == '__main__':
   validate = loadtxt('../data/data'+file_num+'_validate.csv')
   x_validate = validate[:, 0:2]
   y_validate = validate[:, 2:3]
-  plotDecisionBoundary(x_validate, y_validate, predict_svm, [-1, 0, 1], weight_vector, b, title = 'SVM Validate')
+  plotDecisionBoundary(x_validate, y_validate, predict_svm, [-1, 0, 1], weight_vector, b, title = 'SVM Validation, data' + str(file_num))
 
   validation_error_rate = get_classification_error_rate(x_validate, y_validate, weight_vector, b)
   print "validation_error_rate: ", validation_error_rate
