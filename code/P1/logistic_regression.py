@@ -5,6 +5,7 @@ import numpy
 import math
 import sys
 import pylab as pl
+from sklearn                import linear_model
 ###Loss Functions####
 
 def logistic_loss(x, y, w):
@@ -12,16 +13,13 @@ def logistic_loss(x, y, w):
 	weight = w[1:len(w)]
 	cumulative_sum = 0
 
-	print len(w)
-	print "weight length", len(weight)
 	for i in range(len(x)):
 		
-		inner_term = -y[i] * (numpy.dot(weight, x[i]) + w0)
+		inner_term = numpy.dot(-y[i], (numpy.dot(weight, x[i]) + w0))
 		term = 1 + numpy.exp(inner_term)
 		log_term = numpy.log(term)
 		cumulative_sum += log_term
 
-	print "sum", cumulative_sum[0]
 	return cumulative_sum[0]
 
 def L2_regularization(w):
@@ -30,14 +28,32 @@ def L2_regularization(w):
 	for i in range(len(weight)):
 		cum_sum += weight[i]**2
 
-	print "cumsum", cum_sum
 	return cum_sum**(0.5)
+
+def L1_regularization(w):
+	weight = w[1: len(w)]
+	cum_sum = 0
+	for i in range(len(weight)):
+		cum_sum += math.fabs(weight[i])
+
+	return cum_sum
 
 def create_L2_logistic_objective(x, y, reg_parameter):
 	def L2_logistic_objective(w):
 		return logistic_loss(x, y, w) + numpy.dot(reg_parameter, L2_regularization(w)**2)
 
 	return L2_logistic_objective
+
+def create_L1_logistic_objective(x, y, reg_parameter):
+	def L1_logistic_objective(w):
+		return logistic_loss(x, y, w) + numpy.dot(reg_parameter, L1_regularization(w))
+
+	return L1_logistic_objective
+
+def create_Logistic_predictor(objective_f):
+	def predictor(x):
+		return objective_f.predict(x)
+	return predictor
 
 #### Actual Execution #####
 if __name__ == '__main__':
@@ -51,7 +67,7 @@ if __name__ == '__main__':
 
 	weight_vector_length = len(X[0])+1
 	w0 = 0.0
-	reg_parameter = 0
+	reg_parameter = 1
 
 
 
@@ -59,21 +75,31 @@ if __name__ == '__main__':
 
 	# Parameters for logistic regression
 
-	step_size = 0.1
-	threshold = 0.01
+	step_size = 0.01
+	threshold = 0.001
+
+	#### Sk Learn Logistic Regression #######
+
+	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.001, C = 1.0)
+	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.001, C = 1.0)
+
+
+	L2_logistic_regressor.fit(X, Y)
+	print "weights", L2_logistic_regressor.coef_
+	print "error rate", L2_logistic_regressor.score(X, Y)
 
 	# Carry out training.
-
-	objective_f = create_L2_logistic_objective(X, Y, reg_parameter)
-
-
-	gradient_f = make_numeric_gradient_calculator(objective_f, 0.001)
+	##### Our own gradient descent #####
+	# objective_f = create_L2_logistic_objective(X, Y, reg_parameter)
 
 
-	previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
-	min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-	print "min_x: ", min_x, "  min_y",  min_y
-	print "number of steps: ", len(previous_values)
+	# gradient_f = make_numeric_gradient_calculator(objective_f, 0.00001)
+
+
+	# previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
+	# min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+	# print "min_x: ", min_x, "  min_y",  min_y
+	# print "number of steps: ", len(previous_values)
 	
 
-	plot_gradient_descent(objective_f, previous_values)
+	# plot_gradient_descent(objective_f, previous_values)

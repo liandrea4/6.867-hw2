@@ -10,7 +10,12 @@ def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
         old_y = previous_values[-1][1]
         new_x = old_x - (step_size * gradient_f(old_x))
         new_y = objective_f(new_x)
+
+        print "nex_x", new_x
+        print "new_y", new_y
         difference = old_y - new_y
+
+        print "difference", difference
         previous_values.append((new_x, new_y))
 
     return previous_values
@@ -94,9 +99,6 @@ def make_numeric_gradient_calculator(f, delta):
             numpy.put(old_x, [i], [old_value])
             numpy.put(new_x, [i], [new_value])
 
-            print "new x", f(new_x)
-            print "old x", f(old_x)
-            print "delta 1", delta1
             current_slope = (f(new_x) - f(old_x))/(delta1*2)
             slopes[i] = current_slope
 
