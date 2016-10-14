@@ -80,8 +80,8 @@ if __name__ == '__main__':
 
 	#### Sk Learn Logistic Regression #######
 
-	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.001, C = 1)
-	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.001, C = 1)
+	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.001, C = 10**20)
+	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.001, C = 10**20)
 
 	L1_logistic_regressor.fit(X, Y)
 	print "L1 weights", L1_logistic_regressor.coef_
