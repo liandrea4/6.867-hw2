@@ -46,7 +46,9 @@ def solve_dual_svm_slack(x, y, C):
   return xvals
 
 
+
 ###### SVM with kernels ######
+
 def linear_kernel_fn(x_i, x_j):
   return np.dot(x_i, x_j)
 
