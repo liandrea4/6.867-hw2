@@ -58,7 +58,7 @@ def create_Logistic_predictor(objective_f):
 #### Actual Execution #####
 if __name__ == '__main__':
 	   # parameters
-	name = '4'
+	name = '3'
 	print '======Training======'
 	# load data from csv files
 	train = numpy.loadtxt('../data/data'+name+'_train.csv')
@@ -89,16 +89,20 @@ if __name__ == '__main__':
 
 	#### Sk Learn Logistic Regression #######
 
-	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.00001, C = 5)
-	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.00001, C = 5)
+	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.00001, C = 1)
+	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.00001, C = 1)
 
 	L1_logistic_regressor.fit(X, Y)
 	print "L1 weights", L1_logistic_regressor.coef_
+	print "L1 bias", L1_logistic_regressor.intercept_
+	print "L1 training accuracy rate", L1_logistic_regressor.score(X, Y)
 	print "L1 validation accuracy rate", L1_logistic_regressor.score(X_v, Y_v)
 	print "L1 test accuracy rate", L1_logistic_regressor.score(X_t, Y_t)
 
 	L2_logistic_regressor.fit(X, Y)
 	print "L2 weights", L2_logistic_regressor.coef_
+	print "L2 bias", L2_logistic_regressor.intercept_
+	print "L2 training accuracy rate", L2_logistic_regressor.score(X, Y)
 	print "L2 validation accuracy rate", L2_logistic_regressor.score(X_v, Y_v)
 	print "L2 test error rate", L2_logistic_regressor.score(X_t, Y_t)
 
