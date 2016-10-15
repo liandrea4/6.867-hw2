@@ -26,7 +26,7 @@ def plotDecisionBoundary_slack(X, Y, scoreFn, values, weight_vector, b, title = 
     pl.axis('tight')
     pl.show()
 
-def plotDecisionBoundary_kernel(X, Y, scoreFn, values, x_data, y_data, alpha_vals, b, kernel_fn, title = ""):
+def plotDecisionBoundary_kernel(X, Y, scoreFn, values, alpha_vals, b, kernel_fn, title = ""):
     # Plot the decision boundary. For that, we will asign a score to
     # each point in the mesh [x_min, m_max]x[y_min, y_max].
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
@@ -34,7 +34,7 @@ def plotDecisionBoundary_kernel(X, Y, scoreFn, values, x_data, y_data, alpha_val
     h = max((x_max-x_min)/200., (y_max-y_min)/200.)
     xx, yy = meshgrid(arange(x_min, x_max, h),
                       arange(y_min, y_max, h))
-    zz = array([scoreFn(x, x_data, y_data, alpha_vals, b, kernel_fn) for x in c_[xx.ravel(), yy.ravel()]])
+    zz = array([scoreFn(x, X, Y, alpha_vals, b, kernel_fn) for x in c_[xx.ravel(), yy.ravel()]])
     zz = zz.reshape(xx.shape)
     pl.figure()
     CS = pl.contour(xx, yy, zz, values, colors = 'green', linestyles = 'solid', linewidths = 2)
