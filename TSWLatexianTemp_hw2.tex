@@ -82,37 +82,53 @@ $$E_{LR}(w, w_0) = \textsc{NLL}(w, w_0) + \lambda ||w||^2_2$$
 where
 $$\textsc{NLL}(w, w_0) = \sum_i \log(1 + \exp(-y^{(i)} (w x^{(i)} + w_0)))$$
 and in the case of L2 regularization,
-$$|w| = |w|_2 = \sqrt{w_1^2 + ... + w_n^2}$$
+$$||w|| = |w|_2 = \sqrt{w_1^2 + ... + w_n^2}$$
 Gradient descent was run with this objective function on the training dataset \texttt{data1\_train.csv} with $\lambda = 0$. We observed how the weight vector changed as a function of the number of iterations of gradient descent across various initial guesses, step sizes, and convergence criterion. There were three key findings that we were able to make. First, we saw that the ultimate convergence weight was heavily dependent on the initial guess. This actually makes a good deal of sense because of the fact that there are infinitely many ways to perfectly separate a dataset that's linearly separable. The second observation was that $w_{0}$ and $w_{1}$ always decreased as number of iterations increased whereas $w_{2}$ also increased. Finally, we saw that the convergence weight values were all within the same order of magnitude as the initial guess. This makes intuitive sense since we know from class that in the case of linearly separable data, the optimization aims to make the weights as large as possible. \\
 
 When $\lambda = 1$, we see drastically different behavior in how the weight vector changes throughout the course of the gradient descent. The primary difference is the fact that $w_{0}, w_{1}, and w_{2}$ all converge to much smaller values. For example, when we set the initial guesses to be $100$ for all 3 components of the weight vector, the converged weights were two orders of magnitude less than the initial guesses. The reason for this phenomenon is due to the regularization penalty incurred when we set $\lambda = 1$
 
 \subsection{L1 regularization}
-In the case of L1 regularization, we get that in the above equation,
+In the case of L1 regularization, the objective function is the same except that $||w^2_2||$ becomes replaced with $||w_1||$, whereby $||w_1||$ is defined by:
 $$|w| = |w|_1 = \sum_{i=1}^n |w_i|$$
-We can evaluate the different regularization techniques under different values of $\lambda$ in the context of the weight vectors, the decision boundary, and the classification error rate in each of the training data sets.
+We can evaluate the different regularization techniques under different values of $\lambda$ in the context of the weight vectors, the decision boundary, and the classification error rate in each of the training data sets. Before we dive into details, we make the obvious observation that when $\lambda = 0$, the choice of regularizer ($L_1$ vs. $L_2$) makes no difference on anything since the entire term is just $0$.
 
 \subsubsection{Weight vector}
+In terms of the weight vector, we discovered that L2 regularization with $\lambda = 1$ resulted in weights with slightly lower magnitude compared with L1 regularization. This makes intuitive sense given the fact that $w_2 > 1$ in both cases meaning that it dominates the expression and squaring results in a larger penalty for cases where $n>0$.
 
 \subsubsection{Decision boundary}
+The decision boundary was able to perfectly separate the data for all values of $\lambda$ as well as for both L1 and L2 regularization. This is most likely due to the fact that our dataset is linearly separable.
 
 \subsubsection{Classification error rate}
+The classification error rate is always $0$ for all values of $\lambda$ as well as for both L1 and L2 regularization. This is due to the fact that our dataset is linearly separable.
 
 \subsection{Optimization}
-By using the training and validation data sets, we can identify the best regularizer and value for $\lambda$ for each of the four data sets. These results are presented in Table 1.
+By using the training and validation data sets, we can identify the best regularizer and value for $\lambda$ for each of the four data sets. These results are presented in Table 1 (above). Graphs of the decision boundaries for the optimal regularizers and $\lambda$s are shown below.
+
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c | }
       \hline
-      Dataset & Best regularizer & Best $\lambda$ & Test performance \\ \hline
-      1       & 5                & 6              & 1 \\ \hline
-      2       & 5                & 6              & 1 \\ \hline
-      3       & 5                & 6              & 1 \\ \hline
-      4       & 5                & 6              & 1 \\ \hline
+      Data & Best regularizer & Best $\lambda$ & Test performance \\ \hline
+      1       & both           & all            & 1.0 \\ \hline
+      2       & both           & all            & 0.805 \\ \hline
+      3       & L2               & 1             & 0.97 \\ \hline
+      4       & L1               & 1             & 0.5 \\ \hline
     \end{tabular}
   \end{center}
   \caption{Optimal regularizer and $\lambda$ for datasets}
 \end{table}
+
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{Part1_data1_test.png}
+  \includegraphics[width=1.2\linewidth]{Part1_data2_test.png}
+  \includegraphics[width=1.2\linewidth]{Part1_data3_test.png}
+  \includegraphics[width=1.2\linewidth]{Part1_data4_test.png}
+\end{multicols}
+\caption{decision boundaries for test data}
+\end{figure}
+
 
 \section{Support Vector Machine}
 In this section, we explore various versions of the dual form of support vector machines, first with slack variables and then with generalized kernel functions.
@@ -122,7 +138,7 @@ We here implement a dual form of linear SVMs with slack variables. More specific
 $$\max_\alpha -\frac{1}{2}|\sum_i \alpha_i y^{(i)} x^{(i)}|^2 + \sum_i \alpha_i$$
 $$\text{s.t.} \sum_i \alpha_i y^{(i)} = 0$$
 $$0 \leq \alpha_i \leq C, 1 \leq i \leq n$$
-Written another way, this maximization problem can be framed as a minimiation problem:
+Written another way, this maximization problem can be framed as a minimization problem:
 $$\min_\alpha \frac{1}{2} x^T P x + q^T x$$
 $$\text{s.t.} G x \leq h$$
 $$ Ax = b $$

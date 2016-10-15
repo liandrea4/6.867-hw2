@@ -58,12 +58,21 @@ def create_Logistic_predictor(objective_f):
 #### Actual Execution #####
 if __name__ == '__main__':
 	   # parameters
-	name = '1'
+	name = '4'
 	print '======Training======'
 	# load data from csv files
 	train = numpy.loadtxt('../data/data'+name+'_train.csv')
 	X = train[:,0:2]
 	Y = train[:,2:3]
+
+
+	validate = numpy.loadtxt('../data/data'+name+'_validate.csv')
+	X_v = validate[:,0:2]
+	Y_v = validate[:,2:3]
+
+	test = numpy.loadtxt('../data/data'+name+'_test.csv')
+	X_t = test[:,0:2]
+	Y_t = test[:,2:3]
 
 	weight_vector_length = len(X[0])+1
 	
@@ -80,16 +89,18 @@ if __name__ == '__main__':
 
 	#### Sk Learn Logistic Regression #######
 
-	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.001, C = 10**20)
-	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.001, C = 10**20)
+	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.00001, C = 5)
+	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.00001, C = 5)
 
 	L1_logistic_regressor.fit(X, Y)
 	print "L1 weights", L1_logistic_regressor.coef_
-	print "L1 error rate", L1_logistic_regressor.score(X, Y)
+	print "L1 validation accuracy rate", L1_logistic_regressor.score(X_v, Y_v)
+	print "L1 test accuracy rate", L1_logistic_regressor.score(X_t, Y_t)
 
 	L2_logistic_regressor.fit(X, Y)
 	print "L2 weights", L2_logistic_regressor.coef_
-	print "L2 error rate", L2_logistic_regressor.score(X, Y)
+	print "L2 validation accuracy rate", L2_logistic_regressor.score(X_v, Y_v)
+	print "L2 test error rate", L2_logistic_regressor.score(X_t, Y_t)
 
 	# Carry out training.
 	##### Our own gradient descent #####
