@@ -96,26 +96,39 @@ We can evaluate the different regularization techniques under different values o
 In terms of the weight vector, we discovered that L2 regularization with $\lambda = 1$ resulted in weights with slightly lower magnitude compared with L1 regularization. This makes intuitive sense given the fact that $w_2 > 1$ in both cases meaning that it dominates the expression and squaring results in a larger penalty for cases where $n>0$.
 
 \subsubsection{Decision boundary}
-
+The decision boundary was able to perfectly separate the data for all values of $\lambda$ as well as for both L1 and L2 regularization. This is most likely due to the fact that our dataset is linearly separable.
 
 \subsubsection{Classification error rate}
-The classification error rate is always $0$ for all values of lambda as well as for both L1 and L2 regularization. This is most likely due to the fact that our dataset is linearly separable.
+The classification error rate is always $0$ for all values of $\lambda$ as well as for both L1 and L2 regularization. This is due to the fact that our dataset is linearly separable.
 
 \subsection{Optimization}
-By using the training and validation data sets, we can identify the best regularizer and value for $\lambda$ for each of the four data sets. These results are presented in Table 1.
+By using the training and validation data sets, we can identify the best regularizer and value for $\lambda$ for each of the four data sets. These results are presented in Table 1 (above). Graphs of the decision boundaries for the optimal regularizers and $\lambda$s are shown below.
+
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c | }
       \hline
-      Dataset & Best regularizer & Best $\lambda$ & Test performance \\ \hline
-      1       & 5                & 6              & 1 \\ \hline
-      2       & 5                & 6              & 1 \\ \hline
-      3       & 5                & 6              & 1 \\ \hline
-      4       & 5                & 6              & 1 \\ \hline
+      Data & Best regularizer & Best $\lambda$ & Test performance \\ \hline
+      1       & both           & all            & 1.0 \\ \hline
+      2       & both           & all            & 0.805 \\ \hline
+      3       & L2               & 1             & 0.97 \\ \hline
+      4       & L1               & 1             & 0.5 \\ \hline
     \end{tabular}
   \end{center}
   \caption{Optimal regularizer and $\lambda$ for datasets}
 \end{table}
+
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{Part1_data1_test.png}
+  \includegraphics[width=1.2\linewidth]{Part1_data2_test.png}
+  \includegraphics[width=1.2\linewidth]{Part1_data3_test.png}
+  \includegraphics[width=1.2\linewidth]{Part1_data4_test.png}
+\end{multicols}
+\caption{decision boundaries for test data}
+\end{figure}
+
 
 \section{Support Vector Machine}
 In this section, we explore various versions of the dual form of support vector machines, first with slack variables and then with generalized kernel functions.
@@ -259,7 +272,7 @@ Solving for $x$ when $C=1$, we get that $
 \end{bmatrix}^T
 $. This indicates that the first and third samples are support vectors because $0 \leq \alpha_i \leq C$. \\
 
-Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is illustrated and summarized in Figure 1 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1).
+Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is illustrated and summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1).
 \begin{figure}[width=\linewidth]
 \centering
 \begin{multicols}{2}
