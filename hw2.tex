@@ -272,7 +272,10 @@ Solving for $x$ when $C=1$, we get that $
 \end{bmatrix}^T
 $. This indicates that the first and third samples are support vectors because $0 \leq \alpha_i \leq C$. \\
 
-Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is illustrated and summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1).
+Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is illustrated and summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1). \\
+
+It is interesting to note that due to numerical rounding and errors, the $\alpha$ values obtained were not exactly equal to 0 or $C$, but instead usually varied by a small threshold. In our case, we chose a threshold of $0.00001$ in order to filter out $\alpha$ values extremely close to 0 or $C$ and select for "true" support vectors. Varying this threshold however could change the classification of data as support vectors or not, and this could ultimately affect the accuracy and error rate of our classifier.
+
 \begin{figure}[width=\linewidth]
 \centering
 \begin{multicols}{2}
@@ -303,7 +306,23 @@ Our implementation of the dual form of SVMs with slack variables was run on each
 \end{table}
 
 \subsection{Dual form with kernels}
+We here extend our dual form SVM to take kernel functions and kernel matrices as input. This has important implications for a number of reasons including performance and minimizing the cost of operations, as well as space and storage. We here implemented the dual form of SVMs with kernels for two kernel functions: (1) linear kernels, and (2) Gaussian radial basis function (RBF) kernels, while varying the value of $C$. \\
 
+As the value $C$ was increased, the number of support vectors generally did not show any noticeable or significant trends. This data is summarized in Table 4.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | c | }
+      \hline
+              & \textbf{0.01} & \textbf{0.1} & \textbf{1} & 10 & 100 \\ \hline
+      1       & 3    & 3   & 3 & 3  & 3   \\ \hline
+      2       & 3    & 3   & 3 & 5  & 4   \\ \hline
+      3       & 2    & 2   & 3 & 2  & 3   \\ \hline
+      4       & 2    & 3   & 3 & 3  & 4   \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Number of support vectors by C value}
+\end{table}
 
 \section{Pegasos}
 
