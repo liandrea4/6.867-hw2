@@ -193,6 +193,10 @@ if __name__ == '__main__':
 # training: 0.06
 # validation: 0.115
 
+# 2: C = 0.1
+# training: 0.0825
+# validation: 0.115
+
 # 2: C = 100
 # training: 0.035
 # validation: 0.135
@@ -215,4 +219,4 @@ if __name__ == '__main__':
 
 # 4: C = 0.1
 # training: 0.035
-# validation:
+# validation: 0.04
