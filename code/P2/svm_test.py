@@ -72,6 +72,7 @@ def calculate_b_slack(weight_vector, x, y, alpha_vals, C, threshold, b_threshold
 
 def calculate_b_kernel(x, y, alpha_vals, C, threshold, b_threshold, kernel_fn):
   old_b = None
+
   num_support_vectors = 0
   for x_i, y_i, alpha_i in zip(x, y, alpha_vals):
     if alpha_i > threshold and alpha_i < C - threshold:
@@ -101,7 +102,8 @@ def run_slack_var_svm(file_num, C, threshold, b_threshold):
   alpha_vals = solve_dual_svm_slack(x_training, y_training, C)
   weight_vector = train_model(x_training, y_training, alpha_vals, threshold)
   b = calculate_b_slack(weight_vector, x_training, y_training, alpha_vals, C, threshold, b_threshold)
-  plotDecisionBoundary_slack(x_training, y_training, predict_svm_slack, [-1, 0, 1], weight_vector, b, title = 'SVM Training, data' + str(file_num))
+  plotDecisionBoundary_slack(x_training, y_training, predict_svm_slack, [-1, 0, 1], weight_vector, b,
+    title = 'SVM Training, data' + str(file_num))
 
   training_error_rate = get_classification_error_rate_slack(x_training, y_training, weight_vector, b)
   print "training_error_rate: ", training_error_rate
@@ -111,7 +113,8 @@ def run_slack_var_svm(file_num, C, threshold, b_threshold):
   validate = loadtxt('../data/data'+file_num+'_validate.csv')
   x_validate = validate[:, 0:2]
   y_validate = validate[:, 2:3]
-  plotDecisionBoundary_slack(x_validate, y_validate, predict_svm_slack, [-1, 0, 1], weight_vector, b, title = 'SVM Validation, data' + str(file_num))
+  plotDecisionBoundary_slack(x_validate, y_validate, predict_svm_slack, [-1, 0, 1], weight_vector, b,
+    title = 'SVM Validation, data' + str(file_num))
 
   validation_error_rate = get_classification_error_rate_slack(x_validate, y_validate, weight_vector, b)
   print "validation_error_rate: ", validation_error_rate
@@ -134,13 +137,12 @@ def run_kernel_svm(file_num, C, threshold, b_threshold, gamma):
   print "Solving for b..."
   b, num_support_vectors = calculate_b_kernel(x_training, y_training, alpha_vals, C, threshold, b_threshold, kernel_fn)
   print "b: ", b
-  print "num_support_vectors: ", num_support_vectors
 
   print "Plotting decision boundary..."
   # plotDecisionBoundary_slack(x_training, y_training, predict_svm_slack, [-1, 0, 1], weight_vector, b,
   #   title = 'SVM Training, data' + str(file_num))
   plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
-    title = 'SVM Training, data' + str(file_num))
+    title = 'SVM Training, data' + str(file_num) + ', C=' + str(C))
 
   training_error_rate = get_classification_error_rate_kernel(x_training, y_training, alpha_vals, b, kernel_fn)
   print "training_error_rate: ", training_error_rate
@@ -151,7 +153,7 @@ def run_kernel_svm(file_num, C, threshold, b_threshold, gamma):
   x_validate = validate[:, 0:2]
   y_validate = validate[:, 2:3]
   plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
-    title = 'SVM Validation, data' + str(file_num))
+    title = 'SVM Validation, data' + str(file_num) + ', C=' + str(C))
 
   validation_error_rate = get_classification_error_rate_kernel(x_validate, y_validate, alpha_vals, b, kernel_fn)
   print "validation_error_rate: ", validation_error_rate
@@ -160,12 +162,57 @@ def run_kernel_svm(file_num, C, threshold, b_threshold, gamma):
 ###### MAIN ######
 if __name__ == '__main__':
   file_num = sys.argv[1]
-  C = 1.
-  threshold = 0.0001
+  C = float(sys.argv[2])
+  threshold = 0.000001
   b_threshold = 3
   gamma = 1.
 
   # run_slack_var_svm(file_num, C, threshold, b_threshold)
-
   run_kernel_svm(file_num, C, threshold, b_threshold, gamma)
 
+  # train = loadtxt('../data/data'+file_num+'_train.csv')
+  # x_training = train[:, 0:2].copy()
+  # y_training = train[:, 2:3].copy()
+  # kernel_fn = linear_kernel_fn
+  # # kernel_fn = make_gaussian_rbf_kernel_fn(gamma)
+
+  # for C_val in [0.01, 0.1, 1, 10, 100]:
+  #   alpha_vals = solve_dual_svm_kernel(x_training, y_training, C_val, kernel_fn)
+  #   weight_vector = train_model(x_training, y_training, alpha_vals, threshold)
+  #   norm = sum([w_i ** 2 for w_i in weight_vector ])
+  #   print "C: ", C_val, "   norm: ", norm, "  geometric margin: ", 1/float(norm)
+
+
+# gaussian:
+
+# 1:
+# training: 0
+# validation: 0
+
+# 2: C = 1
+# training: 0.06
+# validation: 0.115
+
+# 2: C = 100
+# training: 0.035
+# validation: 0.135
+
+# 3: C =1
+# training: 0.0175
+# validation: 0.065
+
+# 3: C = 0.01
+# training: 0.0575
+# validation: 0.195
+
+# 3: C = 100
+# training: 0.0125
+# validation: 0.065
+
+# 4: C = 1
+# training: 0.0325
+# validation: 0.05
+
+# 4: C = 0.1
+# training: 0.035
+# validation:
