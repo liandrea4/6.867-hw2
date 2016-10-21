@@ -7,7 +7,7 @@ filepath = "../data/mnist_digit_"
 
 def make_dataset(digit_num):
   dataset = []
-  with open(filepath + str(digit_num) + ".csv", 'r') as f:
+  with open(filepath + digit_num + ".csv", 'r') as f:
     for line in f:
       dataset.append(line.split(" "))
 
@@ -21,8 +21,9 @@ def make_all_datasets():
   all_datasets = {}
 
   for i in range(10):
-    training, validation, testing = make_dataset(i)
-    all_datasets[i] = [training, validation, testing]
+    num = str(i)
+    training, validation, testing = make_dataset(num)
+    all_datasets[num] = [training, validation, testing]
 
     assert len(training) == num_training
     assert len(validation) == num_validation
@@ -38,16 +39,18 @@ def normalize_datasets(all_datasets):
 
     for number_datasets in all_datasets[key]:
       normalized_number_datasets = []
-      for dataset in number_datasets:
-        normalized = [ 2 * float(elem) / 255. - 1 for elem in dataset ]
-      normalized_number_datasets.append(normalized)
 
-    normalized_dict[key].append(normalized_number_datasets)
+      for image in number_datasets:
+        normalized_image = [ 2 * float(elem) / 255. - 1 for elem in image ]
+        normalized_number_datasets.append(normalized_image)
+
+      normalized_dict[key].append(normalized_number_datasets)
 
   return normalized_dict
 
 all_datasets = make_all_datasets()
 normalized_dataset = normalize_datasets(all_datasets)
+
 for list_of_datasets in normalized_dataset.values():
   for dataset in list_of_datasets:
     for image in dataset:
