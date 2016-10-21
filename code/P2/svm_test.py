@@ -49,7 +49,7 @@ def get_classification_error_rate_kernel(x, y, alpha_vals, b, kernel_fn):
 ##############################################
 
 def train_model(X, Y, alpha_vals, threshold):
-  weight_vector = np.array([0., 0.])
+  weight_vector = np.array([0.] * len(X[0]))
   for alpha_i, x_i, y_i in zip(alpha_vals, X, Y):
     weight_vector += alpha_i * y_i * x_i
 
@@ -91,44 +91,35 @@ def calculate_b_kernel(x, y, alpha_vals, C, threshold, b_threshold, kernel_fn):
 
 ###### Big picture methods ######
 
-def run_slack_var_svm(file_num, C, threshold, b_threshold):
+def run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, threshold, b_threshold, file_num):
 
   ###### Training ######
 
-  train = loadtxt('../data/data'+file_num+'_train.csv')
-  x_training = train[:, 0:2].copy()
-  y_training = train[:, 2:3].copy()
-
   alpha_vals = solve_dual_svm_slack(x_training, y_training, C)
   weight_vector = train_model(x_training, y_training, alpha_vals, threshold)
+  print "weight_vector: ", weight_vector
+
   b = calculate_b_slack(weight_vector, x_training, y_training, alpha_vals, C, threshold, b_threshold)
-  plotDecisionBoundary_slack(x_training, y_training, predict_svm_slack, [-1, 0, 1], weight_vector, b,
-    title = 'SVM Training, data' + str(file_num))
+  print "b: ", b
+
+  # plotDecisionBoundary_slack(x_training, y_training, predict_svm_slack, [-1, 0, 1], weight_vector, b,
+  #   title = 'SVM Training, data' + str(file_num))
 
   training_error_rate = get_classification_error_rate_slack(x_training, y_training, weight_vector, b)
   print "training_error_rate: ", training_error_rate
 
   ###### Validation ######
 
-  validate = loadtxt('../data/data'+file_num+'_validate.csv')
-  x_validate = validate[:, 0:2]
-  y_validate = validate[:, 2:3]
-  plotDecisionBoundary_slack(x_validate, y_validate, predict_svm_slack, [-1, 0, 1], weight_vector, b,
-    title = 'SVM Validation, data' + str(file_num))
+  # plotDecisionBoundary_slack(x_validate, y_validate, predict_svm_slack, [-1, 0, 1], weight_vector, b,
+  #   title = 'SVM Validation, data' + str(file_num))
 
   validation_error_rate = get_classification_error_rate_slack(x_validate, y_validate, weight_vector, b)
   print "validation_error_rate: ", validation_error_rate
 
 
-def run_kernel_svm(file_num, C, threshold, b_threshold, gamma):
+def run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C, threshold, b_threshold, gamma, file_num):
 
   ###### Training ######
-
-  train = loadtxt('../data/data'+file_num+'_train.csv')
-  x_training = train[:, 0:2].copy()
-  y_training = train[:, 2:3].copy()
-  # kernel_fn = linear_kernel_fn
-  kernel_fn = make_gaussian_rbf_kernel_fn(gamma)
 
   print "Solving for alphas..."
   alpha_vals = solve_dual_svm_kernel(x_training, y_training, C, kernel_fn)
@@ -149,9 +140,6 @@ def run_kernel_svm(file_num, C, threshold, b_threshold, gamma):
 
   ###### Validation ######
 
-  validate = loadtxt('../data/data'+file_num+'_validate.csv')
-  x_validate = validate[:, 0:2]
-  y_validate = validate[:, 2:3]
   plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
     title = 'SVM Validation, data' + str(file_num) + ', C=' + str(C))
 
@@ -167,8 +155,20 @@ if __name__ == '__main__':
   b_threshold = 3
   gamma = 1.
 
-  # run_slack_var_svm(file_num, C, threshold, b_threshold)
-  run_kernel_svm(file_num, C, threshold, b_threshold, gamma)
+  train = loadtxt('../data/data'+file_num+'_train.csv')
+  x_training = train[:, 0:2].copy()
+  y_training = train[:, 2:3].copy()
+
+  validate = loadtxt('../data/data'+file_num+'_validate.csv')
+  x_validate = validate[:, 0:2]
+  y_validate = validate[:, 2:3]
+
+  # kernel_fn = linear_kernel_fn
+  kernel_fn = make_gaussian_rbf_kernel_fn(gamma)
+
+
+  # run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, threshold, b_threshold, file_num)
+  run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C, threshold, b_threshold, gamma, file_num)
 
   # train = loadtxt('../data/data'+file_num+'_train.csv')
   # x_training = train[:, 0:2].copy()
