@@ -1,7 +1,8 @@
-from plot_svm_boundary  import *
-from svm                import solve_dual_svm_slack, solve_dual_svm_kernel, linear_kernel_fn, make_gaussian_rbf_kernel_fn
-import pylab            as pl
-import numpy            as np
+from plot_svm_boundary   import *
+from svm                 import solve_dual_svm_slack, solve_dual_svm_kernel, linear_kernel_fn, make_gaussian_rbf_kernel_fn
+import pylab             as pl
+import numpy             as np
+import matplotlib.pyplot as plt
 import sys
 
 def predict_svm_slack(weight_vector, x, b):
@@ -27,13 +28,13 @@ def predict_svm_kernel(x, x_training, y_training, alpha_vals, b, kernel_fn):
     return 0
 
 def get_classification_error_rate_slack(x, y, weight_vector, b):
-  num_errors = 0
+  errors = []
   for x_i, y_i in zip(x,y):
     prediction = predict_svm_slack(weight_vector, x_i, b)
     if prediction != y_i:
-      num_errors += 1
+      errors.append(x_i)
 
-  return float(num_errors) / len(x)
+  return float(len(errors)) / len(x), errors
 
 def get_classification_error_rate_kernel(x, y, alpha_vals, b, kernel_fn):
   num_errors = 0
@@ -105,7 +106,7 @@ def run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, thresho
   # plotDecisionBoundary_slack(x_training, y_training, predict_svm_slack, [-1, 0, 1], weight_vector, b,
   #   title = 'SVM Training, data' + str(file_num))
 
-  training_error_rate = get_classification_error_rate_slack(x_training, y_training, weight_vector, b)
+  training_error_rate, training_errors = get_classification_error_rate_slack(x_training, y_training, weight_vector, b)
   print "training_error_rate: ", training_error_rate
 
   ###### Validation ######
@@ -113,8 +114,15 @@ def run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, thresho
   # plotDecisionBoundary_slack(x_validate, y_validate, predict_svm_slack, [-1, 0, 1], weight_vector, b,
   #   title = 'SVM Validation, data' + str(file_num))
 
-  validation_error_rate = get_classification_error_rate_slack(x_validate, y_validate, weight_vector, b)
+  validation_error_rate, validation_errors = get_classification_error_rate_slack(x_validate, y_validate, weight_vector, b)
   print "validation_error_rate: ", validation_error_rate
+
+  for error in validation_errors:
+    casted_array = np.array([ float(val) for val in error ])
+    reshaped_array = np.reshape(casted_array, (28, 28))
+    plt.imshow(reshaped_array, cmap='Greys_r')
+    plt.title("classification=1, actual=7")
+    plt.show()
 
 
 def run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C, threshold, b_threshold, gamma, file_num):
@@ -123,28 +131,76 @@ def run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C,
 
   print "Solving for alphas..."
   alpha_vals = solve_dual_svm_kernel(x_training, y_training, C, kernel_fn)
-  weight_vector = train_model(x_training, y_training, alpha_vals, threshold)
+  # weight_vector = train_model(x_training, y_training, alpha_vals, threshold)
 
   print "Solving for b..."
   b, num_support_vectors = calculate_b_kernel(x_training, y_training, alpha_vals, C, threshold, b_threshold, kernel_fn)
   print "b: ", b
 
   print "Plotting decision boundary..."
-  # plotDecisionBoundary_slack(x_training, y_training, predict_svm_slack, [-1, 0, 1], weight_vector, b,
-  #   title = 'SVM Training, data' + str(file_num))
-  plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
-    title = 'SVM Training, data' + str(file_num) + ', C=' + str(C))
+  # plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
+  #   title = 'SVM Training, data' + str(file_num) + ', C=' + str(C))
 
   training_error_rate = get_classification_error_rate_kernel(x_training, y_training, alpha_vals, b, kernel_fn)
   print "training_error_rate: ", training_error_rate
 
   ###### Validation ######
 
-  plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
-    title = 'SVM Validation, data' + str(file_num) + ', C=' + str(C))
+  # plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
+  #   title = 'SVM Validation, data' + str(file_num) + ', C=' + str(C))
 
   validation_error_rate = get_classification_error_rate_kernel(x_validate, y_validate, alpha_vals, b, kernel_fn)
   print "validation_error_rate: ", validation_error_rate
+
+def run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold):
+  C_vals = [0.1, 1, 10, 100]
+  gamma_vals = [1, 10, 100]
+  C_opt = 0
+  gamma_opt = 0
+  b_opt = 0
+  alphas_opt = []
+  kernel_fn_opt = None
+  min_error_rate = float('inf')
+
+  for C in C_vals:
+    for gamma in gamma_vals:
+      print "C: ", C, "  gamma: ", gamma
+      kernel_fn = make_gaussian_rbf_kernel_fn(gamma)
+
+      print "Solving for alphas..."
+      alpha_vals = solve_dual_svm_kernel(x_training, y_training, C, kernel_fn)
+
+      print "Solving for b..."
+      b, num_support_vectors = calculate_b_kernel(x_training, y_training, alpha_vals, C, threshold, b_threshold, kernel_fn)
+      print "b: ", b, " num_support_vectors: ", num_support_vectors
+
+      if b is None:
+        print "No support vectors, skipping C=", C, ", gamma=", gamma, "... "
+        continue
+
+      # print "Calculating training error..."
+      # training_error_rate = get_classification_error_rate_kernel(x_training, y_training, alpha_vals, b, kernel_fn)
+      # print "training_error_rate: ", training_error_rate
+
+      validation_error_rate = get_classification_error_rate_kernel(x_validate, y_validate, alpha_vals, b, kernel_fn)
+      print "validation_error_rate: ", validation_error_rate
+
+      if validation_error_rate < min_error_rate:
+        print "Updating C and gamma..."
+        C_opt = C
+        gamma_opt = gamma
+        b_opt = b
+        alphas_opt = alpha_vals
+        kernel_fn_opt = kernel_fn
+        min_error_rate = validation_error_rate
+
+  print "C_opt: ", C_opt, "   gamma_opt: ", gamma_opt
+
+  testing_error_rate = get_classification_error_rate_kernel(x_testing, y_testing, alphas_opt, b_opt, kernel_fn_opt)
+  print "testing_error_rate: ", testing_error_rate
+
+
+
 
 
 ###### MAIN ######

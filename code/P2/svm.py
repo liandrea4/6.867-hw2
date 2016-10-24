@@ -54,7 +54,9 @@ def linear_kernel_fn(x_i, x_j):
 
 def make_gaussian_rbf_kernel_fn(gamma):
   def gaussian_rbf_kernel_fn(x_i, x_j):
-    magnitude = np.linalg.norm(x_i - x_j) ** 2
+    x_i_np = np.array(x_i)
+    x_j_np = np.array(x_j)
+    magnitude = np.linalg.norm(x_i_np - x_j_np) ** 2
     return math.exp(-1 * gamma * magnitude)
   return gaussian_rbf_kernel_fn
 

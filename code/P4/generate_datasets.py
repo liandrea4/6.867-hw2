@@ -1,4 +1,7 @@
+from PIL                 import Image
 import os
+import numpy             as np
+import matplotlib.pyplot as plt
 
 num_training = 200
 num_validation = 150
@@ -11,9 +14,9 @@ def make_dataset(digit_num):
     for line in f:
       dataset.append(line.split(" "))
 
-  training = dataset[:num_training]
-  validation = dataset[num_training:(num_training + num_validation)]
-  testing = dataset[(num_training + num_validation):(num_training + num_validation + num_testing)]
+  training = np.array(dataset[:num_training])
+  validation = np.array(dataset[num_training:(num_training + num_validation)])
+  testing = np.array(dataset[(num_training + num_validation):(num_training + num_validation + num_testing)])
 
   return training, validation, testing
 
@@ -42,21 +45,22 @@ def normalize_datasets(all_datasets):
 
       for image in number_datasets:
         normalized_image = [ 2 * float(elem) / 255. - 1 for elem in image ]
+        # normalized_image = [ float(elem) for elem in image ]
         normalized_number_datasets.append(normalized_image)
 
       normalized_dict[key].append(normalized_number_datasets)
 
   return normalized_dict
 
-all_datasets = make_all_datasets()
-normalized_dataset = normalize_datasets(all_datasets)
+# all_datasets = make_all_datasets()
+# normalized_dataset = normalize_datasets(all_datasets)
 
-for list_of_datasets in normalized_dataset.values():
-  for dataset in list_of_datasets:
-    for image in dataset:
-      for elem in image:
-        if elem > 1 or elem < -1:
-          raise Exception(elem)
+# for list_of_datasets in normalized_dataset.values():
+#   for dataset in list_of_datasets:
+#     for image in dataset:
+#       for elem in image:
+#         if elem > 1 or elem < -1:
+#           raise Exception(elem)
 
 
 # format of dictionary:

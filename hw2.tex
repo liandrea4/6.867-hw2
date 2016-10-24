@@ -347,7 +347,60 @@ It is interesting to note that simply maximizing the geometric margin $\frac{1}{
 \section{Pegasos}
 
 \section{Handwritten digit recognition}
+Here we investigate the performance of the algorithms implemented on handwritten digit recognition in the MNIST dataset.
 
+\subsection{Logistic regression versus linear SVM}
+
+The logistic regression algorithm with L1 regularization from problem 1 is compared with the linear SVM classifier from problem 2. This data is summarized in Table 5, where the first number for each algorithm is the training error rate and the second number is the testing error rate. \\
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | }
+      \hline
+                     & Logistic regression (L1)    & Linear SVM            \\ \hline
+      1 vs. 7        & 0.0, 0.017                  & 0.0, 0.013            \\ \hline
+      3 vs. 5        & 0.0, 0.057                  & 0.0, 0.053            \\ \hline
+      4 vs. 9        & 0.0, 0.057                  & 0.0, 0.057            \\ \hline
+      even vs. odd   & 0.05, 0.115                 & 0.0, 0.163            \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Error rates for un/normalized data}
+\end{table}
+
+Overall, the linear SVM performed approximately as well as the logistic regression under L1 regularization with very similar classification error rates. Similar results were found for logistic regression under L2 regularization. \\
+
+This analysis was conducted for both normalized data and not normalized data. Interestingly, whether or not the data was normalized did not affect the training or testing error rates. Furthermore, examining some of the misclassified images reveals that this classification does in fact make sense in the overall scope of the algorithms used, where in some cases it was even difficult to classify by the images by human examination. Some of the training errors in the 1 versus 7 classification are illustrated in Figure 4.
+
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P4/error,1.png}
+  \includegraphics[width=1.2\linewidth]{code/P4/error,7.png}
+\end{multicols}
+\caption{Classification errors in test set}
+\end{figure}
+
+\subsection{Gaussian RBF SVM}
+
+We additionally investigated the classification accuracy of the Gaussian RBF SVM on the MNIST dataset with selection of hyperparameters through validation. Here, $C$ was selected from possible $C$ values of $[0.1, 1, 10, 100]$ and $\gamma$ was selected from possible values of $[1, 10, 100]$. For each of the pairwise classification tasks presented previously when evaluating the MNIST data using logistic regression and a linear SVM, optimal values for $C$ and $\gamma$ for the Gaussian RBF SVM were selected. These sets of hyperparameters were each associated with a classification error rate in the testing dataset. These results are presented in Table 5.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | }
+      \hline
+                     & Optimal $C$    & Optimal $\gamma$     & Testing error      \\ \hline
+      1 vs. 7        &                &                      &                    \\ \hline
+      3 vs. 5        &                &                      &                    \\ \hline
+      4 vs. 9        &                &                      &                    \\ \hline
+      even vs. odd   &                &                      &                    \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Classification using Gaussian RBF SVM}
+\end{table}
+
+As seen previously, normalization \_\_\_\_\_\_\_\_\_\_\_ matter in classification with a Gaussian RBF SVM. However, the Gaussian RBF SVM generally performed better than the logistic regression (with both L1 and L2 regularization) and the linear SVM.
+
+\subsection{Pegasos }
 
 
 \end{document}

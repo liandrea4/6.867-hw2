@@ -14,7 +14,7 @@ def logistic_loss(x, y, w):
 	cumulative_sum = 0
 
 	for i in range(len(x)):
-		
+
 		inner_term = numpy.dot(-y[i], (numpy.dot(weight, x[i]) + w0))
 		term = 1 + numpy.exp(inner_term)
 		log_term = numpy.log(term)
@@ -55,10 +55,60 @@ def create_Logistic_predictor(objective_f):
 		return objective_f.predict(x)
 	return predictor
 
+def logistic_regression(X, Y, X_v, Y_v, X_t, Y_t):
+
+	weight_vector_length = len(X[0])+1
+
+	reg_parameter = 1
+
+	initial_guess = numpy.array([100.0] * (weight_vector_length))
+
+	# Parameters for logistic regression
+
+	step_size = 0.05
+	threshold = 0.001
+
+	#### Sk Learn Logistic Regression #######
+
+	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.00001, C = 1)
+	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.00001, C = 1)
+
+	L1_logistic_regressor.fit(X, Y)
+	# print "L1 weights", L1_logistic_regressor.coef_
+	print "L1 bias", L1_logistic_regressor.intercept_
+	print "L1 training accuracy rate", 1 - L1_logistic_regressor.score(X, Y)
+	print "L1 validation accuracy rate", L1_logistic_regressor.score(X_v, Y_v)
+	print "L1 test accuracy rate", 1 - L1_logistic_regressor.score(X_t, Y_t)
+
+	L2_logistic_regressor.fit(X, Y)
+	# print "L2 weights", L2_logistic_regressor.coef_
+	print "L2 bias", L2_logistic_regressor.intercept_
+	print "L2 training accuracy rate", L2_logistic_regressor.score(X, Y)
+	print "L2 validation accuracy rate", L2_logistic_regressor.score(X_v, Y_v)
+	print "L2 test accuracy rate", L2_logistic_regressor.score(X_t, Y_t)
+
+	# Carry out training.
+	##### Our own gradient descent #####
+	# objective_f = create_L2_logistic_objective(X, Y, reg_parameter)
+
+
+	# gradient_f = make_numeric_gradient_calculator(objective_f, 0.00001)
+
+
+	# previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
+	# min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+	# print "min_x: ", min_x, "  min_y",  min_y
+	# print "number of steps: ", len(previous_values)
+
+
+	# plot_gradient_descent(objective_f, previous_values)
+
+
 #### Actual Execution #####
 if __name__ == '__main__':
-	   # parameters
+	# parameters
 	name = '3'
+
 	print '======Training======'
 	# load data from csv files
 	train = numpy.loadtxt('../data/data'+name+'_train.csv')
@@ -74,50 +124,4 @@ if __name__ == '__main__':
 	X_t = test[:,0:2]
 	Y_t = test[:,2:3]
 
-	weight_vector_length = len(X[0])+1
-	
-	reg_parameter = 1
-
-
-
-	initial_guess = numpy.array([100.0] * (weight_vector_length))
-
-	# Parameters for logistic regression
-
-	step_size = 0.05
-	threshold = 0.001
-
-	#### Sk Learn Logistic Regression #######
-
-	L1_logistic_regressor = linear_model.LogisticRegression(penalty = 'l1', tol =0.00001, C = 1)
-	L2_logistic_regressor = linear_model.LogisticRegression(penalty = 'l2', tol =0.00001, C = 1)
-
-	L1_logistic_regressor.fit(X, Y)
-	print "L1 weights", L1_logistic_regressor.coef_
-	print "L1 bias", L1_logistic_regressor.intercept_
-	print "L1 training accuracy rate", L1_logistic_regressor.score(X, Y)
-	print "L1 validation accuracy rate", L1_logistic_regressor.score(X_v, Y_v)
-	print "L1 test accuracy rate", L1_logistic_regressor.score(X_t, Y_t)
-
-	L2_logistic_regressor.fit(X, Y)
-	print "L2 weights", L2_logistic_regressor.coef_
-	print "L2 bias", L2_logistic_regressor.intercept_
-	print "L2 training accuracy rate", L2_logistic_regressor.score(X, Y)
-	print "L2 validation accuracy rate", L2_logistic_regressor.score(X_v, Y_v)
-	print "L2 test error rate", L2_logistic_regressor.score(X_t, Y_t)
-
-	# Carry out training.
-	##### Our own gradient descent #####
-	# objective_f = create_L2_logistic_objective(X, Y, reg_parameter)
-
-
-	# gradient_f = make_numeric_gradient_calculator(objective_f, 0.00001)
-
-
-	# previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
-	# min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-	# print "min_x: ", min_x, "  min_y",  min_y
-	# print "number of steps: ", len(previous_values)
-	
-
-	# plot_gradient_descent(objective_f, previous_values)
+	logistic_regression(X, Y, X_v, Y_v, X_t, Y_t)
