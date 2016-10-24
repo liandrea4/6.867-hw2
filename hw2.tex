@@ -328,6 +328,22 @@ As the value $C$ was increased, the number of support vectors generally did not 
 
 \section{Pegasos}
 
+In this section, we use the Pegasos algorithm to solve the following formulation of Soft-SVM: \\
+$$min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  max \{0,1 - y_i(w^T x_i)\}$$\\
+We choose to use Pegasos because it combines together multiple good ideas such as hinge loss, L2 regularization, stochastic (sub)-gradient descent, and a decaying step-size. The following table shows the impact of $\lambda$ (regularization constant) on the margin. It indeed matches our understanding of the objective function because lower regularization means larger slack variables which lead to smaller margins. The reason for this is because $1-\epsilon_i$ governs the width of the margin.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | c | c | c | c |}
+      \hline
+       $\lambda$& $2^1$       & $2^{-1}$&  $2^{-3}$& $2^{-5}$&  $2^{-7}$&  $2^{-10}$ \\ \hline
+       margin       & $\infty$     & $1.134$&   $0.820$& $0.642$&  $0.547$&   $0.389$  \\ \hline
+     
+    \end{tabular}
+  \end{center}
+  \caption{SVM margin as a function of $\lambda$}
+\end{table}
+ 
 \section{Handwritten digit recognition}
 
 

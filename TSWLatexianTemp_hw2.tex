@@ -93,13 +93,13 @@ $$|w| = |w|_1 = \sum_{i=1}^n |w_i|$$
 We can evaluate the different regularization techniques under different values of $\lambda$ in the context of the weight vectors, the decision boundary, and the classification error rate in each of the training data sets. Before we dive into details, we make the obvious observation that when $\lambda = 0$, the choice of regularizer ($L_1$ vs. $L_2$) makes no difference on anything since the entire term is just $0$.
 
 \subsubsection{Weight vector}
-In terms of the weight vector, we discovered that L2 regularization with $\lambda = 1$ resulted in weights with slightly lower magnitude compared with L1 regularization. This makes intuitive sense given the fact that $w_2 > 1$ in both cases meaning that it dominates the expression and squaring results in a larger penalty for cases where $n>0$.
+In terms of the weight vector, we discovered that depending on whether the particular $|w_n|$ was less than or greater to $1$ either the L1 regularization resulted in a higher magnitude weight or the L2 regularization resulted in a higher magnitude weight. Specifically, when $w_n$ was less than 1, L2 regularization resulted in a higher magnitude weight, while when $w_n$ was greater than 1, L1 regularization resulted in a higher magnitude weight.   This makes intuitive sense because squaring number larger than 1 results in larger numbers while squaring numbers less than 1 result in smaller numbers. We also discovered that a larger $\lambda$ values resulted in smaller weight magnitudes for both L1 and L2.
 
 \subsubsection{Decision boundary}
-The decision boundary was able to perfectly separate the data for all values of $\lambda$ as well as for both L1 and L2 regularization. This is most likely due to the fact that our dataset is linearly separable.
+The decision boundary was able to perfectly separate the data for all values of $\lambda$ as well as for both L1 and L2 regularization when the dataset is linearly separable. Generally, all the decision boundaries looked very similar to one another across values of $\lambda$ as well as for both L1 and L2 regularization. The one slight difference we noticed is that when $\lambda = 0$ it appeared the algorithm purely tried to correctly classify the most amount of points which resulted in lines that seemed extremely close to a certain distribution while when $\lambda =1$ the algorithm seemed to be a bit better in taking in to consideration the weights of the various points which resulted in lines that seemed divide the clusters more evenly.
 
 \subsubsection{Classification error rate}
-The classification error rate is always $0$ for all values of $\lambda$ as well as for both L1 and L2 regularization. This is due to the fact that our dataset is linearly separable.
+The classification error rate is always $0$ for all values of $\lambda$ as well as for both L1 and L2 regularization when the dataset is linearly separable. For datasets that were non-linearly separable we found that a larger $\lambda$ generally resulted in slightly worse performance for the training sets (for example 0.9875 with $\lambda = 0$ and 0.965 with $\lambda = 1$ for training dataset 2 using L1 regularization.
 
 \subsection{Optimization}
 By using the training and validation data sets, we can identify the best regularizer and value for $\lambda$ for each of the four data sets. These results are presented in Table 1 (above). Graphs of the decision boundaries for the optimal regularizers and $\lambda$s are shown below.
@@ -272,7 +272,10 @@ Solving for $x$ when $C=1$, we get that $
 \end{bmatrix}^T
 $. This indicates that the first and third samples are support vectors because $0 \leq \alpha_i \leq C$. \\
 
-Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is illustrated and summarized in Figure 1 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1).
+Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is illustrated and summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1). \\
+
+It is interesting to note that due to numerical rounding and errors, the $\alpha$ values obtained were not exactly equal to 0 or $C$, but instead usually varied by a small threshold. In our case, we chose a threshold of $0.00001$ in order to filter out $\alpha$ values extremely close to 0 or $C$ and select for "true" support vectors. Varying this threshold however could change the classification of data as support vectors or not, and this could ultimately affect the accuracy and error rate of our classifier.
+
 \begin{figure}[width=\linewidth]
 \centering
 \begin{multicols}{2}
@@ -302,12 +305,45 @@ Our implementation of the dual form of SVMs with slack variables was run on each
   \caption{Training and validation error rates}
 \end{table}
 
-
 \subsection{Dual form with kernels}
+We here extend our dual form SVM to take kernel functions and kernel matrices as input. This has important implications for a number of reasons including performance and minimizing the cost of operations, as well as space and storage. We here implemented the dual form of SVMs with kernels for two kernel functions: (1) linear kernels, and (2) Gaussian radial basis function (RBF) kernels, while varying the value of $C$. \\
 
+As the value of $C$ increased, on a conceptual level, the margin error should decrease. This is because \\ \\ \\ \\
+
+As the value $C$ was increased, the number of support vectors generally did not show any noticeable or significant trends with a linear kernel. For all the data sets for varying values of $C$, the number of support vectors stayed roughly constant at around 3 or 4. However, for the Gaussian RBF kernel, the number of support vectors generally increased as the value of $C$ increased until a certain point (generally around $C=1$), after which the number of support vectors plateaued or even decreased. This data for the Gaussian RBF is summarized in Table 4.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | c | }
+      \hline
+              & $C=0.01$ & $C=0.1$ & $C=1$ & $C=10$ & $C=100$ \\ \hline
+      1       & 0        & 29      & 45    & 49     & 48      \\ \hline
+      2       & 0        & 21      & 32    & 32     & 36      \\ \hline
+      3       & 2        & 16      & 28    & 25     & 20      \\ \hline
+      4       & 0        & 35      & 79    & 78     & 75      \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Number of support vectors by C value}
+\end{table}
 
 \section{Pegasos}
 
+In this section, we use the Pegasos algorithm to solve the following formulation of Soft-SVM: \\
+$$min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  max \{0,1 - y_i(w^T x_i)\}$$\\
+We choose to use Pegasos because it combines together multiple good ideas such as hinge loss, L2 regularization, stochastic (sub)-gradient descent, and a decaying step-size. The following table shows the impact of $\lambda$ (regularization constant) on the margin. It indeed matches our understanding of the objective function because lower regularization means larger slack variables which lead to smaller margins. The reason for this is because $1-\epsilon_i$ governs the width of the margin.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | c | c | c | c |}
+      \hline
+       $\lambda$& $2^1$       & $2^{-1}$&  $2^{-3}$& $2^{-5}$&  $2^{-7}$&  $2^{-10}$ \\ \hline
+       margin       & $\infty$     & $1.134$&   $0.820$& $0.642$&  $0.547$&   $0.389$  \\ \hline
+     
+    \end{tabular}
+  \end{center}
+  \caption{SVM margin as a function of $\lambda$}
+\end{table}
+ 
 \section{Handwritten digit recognition}
 
 
