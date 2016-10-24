@@ -272,7 +272,7 @@ Solving for $x$ when $C=1$, we get that $
 \end{bmatrix}^T
 $. This indicates that the first and third samples are support vectors because $0 \leq \alpha_i \leq C$. \\
 
-Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is illustrated and summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1). \\
+Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1). \\
 
 It is interesting to note that due to numerical rounding and errors, the $\alpha$ values obtained were not exactly equal to 0 or $C$, but instead usually varied by a small threshold. In our case, we chose a threshold of $0.00001$ in order to filter out $\alpha$ values extremely close to 0 or $C$ and select for "true" support vectors. Varying this threshold however could change the classification of data as support vectors or not, and this could ultimately affect the accuracy and error rate of our classifier.
 
@@ -306,9 +306,25 @@ It is interesting to note that due to numerical rounding and errors, the $\alpha
 \end{table}
 
 \subsection{Dual form with kernels}
-We here extend our dual form SVM to take kernel functions and kernel matrices as input. This has important implications for a number of reasons including performance and minimizing the cost of operations, as well as space and storage. We here implemented the dual form of SVMs with kernels for two kernel functions: (1) linear kernels, and (2) Gaussian radial basis function (RBF) kernels, while varying the value of $C$. \\
+We here extend our dual form SVM to take kernel functions and kernel matrices as input. This has important implications for a number of reasons including performance and minimizing the cost of operations, as well as space and storage. We here implemented the dual form of SVMs with kernels for two kernel functions: (1) linear kernels, and (2) Gaussian radial basis function (RBF) kernels, while varying the value of $C$. Classification for an SVM using the Gaussian RBF kernel with $C$ values of $0.1$ and $100$ is illustrated for each of the four datasets in Figure 3. \\
 
-As the value of $C$ increased, on a conceptual level, the margin error should decrease. This is because \\ \\ \\ \\
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P2/rbf_training,C=01,data1.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/rbf_training,C=01,data2.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/rbf_training,C=01,data3.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/rbf_training,C=01,data4.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/rbf_training,C=100,data1.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/rbf_training,C=100,data2.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/rbf_training,C=100,data3.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/rbf_training,C=100,data4.png}
+\end{multicols}
+\caption{Training and validation decision boundary}
+\end{figure}
+
+
+As the value of $C$ increases, on a conceptual level, the margin error should decrease. This makes intuitive sense because $C$ in part determines the regularization parameter in penalizing error, so as the regularization penalty increases, the margin error $\frac{1}{||w||}$ should decrease. This is only true up to a point however, and beyond this threshold, increasing the value of $C$ to $\infty$ will not always continue to decrease the margin error. \\
 
 As the value $C$ was increased, the number of support vectors generally did not show any noticeable or significant trends with a linear kernel. For all the data sets for varying values of $C$, the number of support vectors stayed roughly constant at around 3 or 4. However, for the Gaussian RBF kernel, the number of support vectors generally increased as the value of $C$ increased until a certain point (generally around $C=1$), after which the number of support vectors plateaued or even decreased. This data for the Gaussian RBF is summarized in Table 4.
 
@@ -325,6 +341,8 @@ As the value $C$ was increased, the number of support vectors generally did not 
   \end{center}
   \caption{Number of support vectors by C value}
 \end{table}
+
+It is interesting to note that simply maximizing the geometric margin $\frac{1}{||w||}$ on the training set is not an optimal criterion for selecting $C$. This is because this decrease in the value of $C$ would maximize the geometric margin, but would additionally reduce the number of support vectors. If this criterion were maximized therefore, the support vectors might be reduced to an extent such that the model would no longer fully represent the training data. An alternative criterion which could be used for selecting $C$ could be to optimize the ratio of the number of support vectors to the total number of samples in the training data. This would ensure that the model trained would fully represent the data without extreme overfitting or underfitting.
 
 \section{Pegasos}
 
