@@ -8,6 +8,16 @@ from logistic_regression  import *
 from pegasos              import run_pegasos
 from datetime             import datetime
 
+def test_pegasos(x_training, y_training, x_validate, y_validate, x_testing, y_testing, weight_vector, b):
+  training_error_rate, training_errors = get_classification_error_rate_slack(x_training, y_training, weight_vector, b)
+  print "training_error_rate: ", training_error_rate
+
+  validation_error_rate, validation_errors = get_classification_error_rate_slack(x_validate, y_validate, weight_vector, b)
+  print "validation_error_rate: ", validation_error_rate
+
+  testing_error_rate, testing_errors = get_classification_error_rate_slack(x_testing, y_testing, weight_vector, b)
+  print "testing_error_rate: ", testing_error_rate
+
 first_dataset = '4'
 second_dataset = '9'
 
@@ -41,35 +51,39 @@ gamma = 1.
 # kernel_fn = linear_kernel_fn
 kernel_fn = make_gaussian_rbf_kernel_fn(gamma)
 max_epochs = 100
-lambda_val = 2**(-10)
+lambda_val = 200
 file_num = 'MNIST'
 
-print "Running SVM..."
+# print "Running SVM..."
+# start = datetime.now()
+# run_slack_var_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, C, threshold, b_threshold)
+# # run_slack_var_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold)
+# slack_duration = datetime.now() - start
+
+# start = datetime.now()
+# run_kernel_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, C, threshold, b_threshold, gamma)
+# # run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, threshold, b_threshold)
+# kernel_duration = datetime.now() - start
+
+
+# print "Running logistic regression..."
+# start = datetime.now()
+# logistic_regression(x_training, y_training, x_validate, y_validate, x_testing, y_testing)
+# logistic_duration = datetime.now() - start
+
+
+print "Running pegasos..."
 start = datetime.now()
-run_slack_var_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, C, threshold, b_threshold)
-# run_slack_var_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold)
-slack_duration = datetime.now() - start
+bias, weight_vector = run_pegasos(x_training, y_training, lambda_val, max_epochs)
+test_pegasos(x_training, y_training, x_validate, y_validate, x_testing, y_testing, weight_vector, bias)
+pegasos_duration = datetime.now() - start
 
-start = datetime.now()
-run_kernel_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, C, threshold, b_threshold, gamma)
-# run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, threshold, b_threshold)
-kernel_duration = datetime.now() - start
-
-
-print "Running logistic regression..."
-start = datetime.now()
-logistic_regression(x_training, y_training, x_validate, y_validate, x_testing, y_testing)
-logistic_duration = datetime.now() - start
-
-
-# print "Running pegasos..."
-# weight_vector = run_pegasos(x_training, y_training, lambda_val, max_epochs)
-# print len(weight_vector), 28 * 28
 
 print "datasets: ", first_dataset, second_dataset
-print "slack duration: ", slack_duration
-print "kernel_duration: ", kernel_duration
-print "logistic_duration: ", logistic_duration
+# print "slack duration: ", slack_duration
+# print "kernel_duration: ", kernel_duration
+# print "logistic_duration: ", logistic_duration
+print "pegasos_duration: ", pegasos_duration
 
 
 # SVM (slack):

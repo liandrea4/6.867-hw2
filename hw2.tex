@@ -382,7 +382,7 @@ The logistic regression algorithm with L1 regularization from problem 1 is compa
   \caption{Error rates for un/normalized data}
 \end{table}
 
-Overall, the linear SVM performed approximately as well as the logistic regression under L1 regularization with very similar classification error rates. Similar results were found for logistic regression under L2 regularization. It makes intuitive sense that the even vs. odd classification task performed with the worst accuracy rate of all of the classification tasks presented. This is because even vs. odd numbers do not necessarily have distinctive physical features belonging to the overall class, so training the model was likely extremely general with low specificity regarding each individual number. \\
+Overall, the linear SVM performed slightly better than the logistic regression under L1 regularization. Similar results were found for logistic regression under L2 regularization. It makes intuitive sense that the even vs. odd classification task performed with the worst accuracy rate of all of the classification tasks presented. This is because even vs. odd numbers do not necessarily have distinctive physical features belonging to the overall class, so training the model was likely extremely general with low specificity regarding each individual number. \\
 
 This analysis was conducted for both normalized data and not normalized data. Interestingly, whether or not the data was normalized did not affect the training or testing error rates. Furthermore, examining some of the misclassified images reveals that this classification does in fact make sense in the overall scope of the algorithms used, where in some cases it was even difficult to classify by the images by human examination. Some of the training errors in the 1 versus 7 classification are illustrated in Figure 4.
 
@@ -417,23 +417,27 @@ As seen previously, normalization of the data did not affect the optimal values 
 
 \subsection{Pegasos}
 
-Comparing the linear and Gaussian SVMs with Pegasos, we can evaluate all algorithms based on classification accuracy as well as performance. Note that in this section, we have chosen the 4 vs. 9 classification task to examine in more detail, but the results from this dataset should generalize well to other classification tasks including 1 vs. 7, 3 vs. 5, and even vs. odd. As mentioned previously, the linear SVM and logistic regression ran much more quickly than the kernel SVM. These runtimes are summarized in Table 7.
+Comparing the linear and Gaussian SVMs with Pegasos, we can evaluate all algorithms based on classification accuracy as well as performance. Pegasos generally ran with slightly improved accuracies over the linear SVM and logistic regression, with error rates of $0.007, 0.057, and 0.043$ for 1 vs. 7, 3 vs. 5, and 4 vs. 9, respectively. The accuracies across most of the algorithms were therefore extremely comparable, with the exception of the Gaussian kernel SVM which ran with 0\% testing error.
+
+The performance in terms of runtime was additionally investigated for each of these algorithsm. These runtimes, presented in seconds, is summarized in Table 7. Note that here, we have chosen the 4 vs. 9 classification task to examine in more detail, but the results from this dataset should generalize well to other classification tasks including 1 vs. 7, 3 vs. 5, and even vs. odd.
 
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c | c | }
       \hline
-             & Logistic   & Linear SVM   & Gaussian SVM  & Pegasos      \\ \hline
-      200    & 0.4        & 0.5          & 0.0           & 0.0          \\ \hline
-      300    & 0.4        & 0.5          & 0.0           & 0.0          \\ \hline
-      400    & 0.4        & 0.5          & 0.0           & 0.0          \\ \hline
-      500    & 0.4        & 0.5          & 0.0           & 0.0          \\ \hline
+             & Logistic     & Linear   & Gaussian SVM & Pegasos    \\ \hline
+      200    & 0.5          & 40           & 200           & 6          \\ \hline
+      300    & 0.8          & 87           & 348           & 8          \\ \hline
+      400    & 0.5          & 161          & 620           & 12         \\ \hline
+      500    & 0.9          & 217          & 891           & 16         \\ \hline
     \end{tabular}
   \end{center}
-  \caption{Classification using Gaussian RBF SVM}
+  \caption{Runtimes of classification algorithms}
 \end{table}
 
+The above numbers for Pegasos are under the parameters where $\lambda = 2^{-10}$ and $max_epochs = 100$. The runtime of pegasos is dependent upon the values for these parameters however, and increasing the maximum number of epochs would accordingly increase the runtime of the algorithm. This follows directly from the implementation of the algorithm, in which a greater number of epochs results in more iterations of the for loop, thereby increasing the runtime of the algorithm. Similarly, as the value of $\lambda$ increased, the runtime of the overall algorithm increased. This is because the step size is inversely proportional with the value of $\lambda$. Thus, at small values of $\lambda$, the step size is larger, and we thus approach the margin more quickly. If this is the case, then fewer computation steps are required and thus, a faster runtime is associated with a smaller value of $\lambda$.
 
+Overall, it seems that Pegasos presents the ideal balance in the tradeoff between runtime and classification accuracy. While the Gaussian SVM had a perfect classification accuracy, the algorithm required more than 30 times longer to run to completion compared with Pegasos, with this factor increasing as the number of training samples increased. On the other side of the spectrum, the logistic regression ran fastest out of all the algorithms, although it had slightly worse accuracy compared with Pegasos and the Gaussian SVM. Thus, Pegasos presents an algorithm which maintains acceptable classification accuracy while remaining scalable to large datasets with many features.
 
 \end{document}
 

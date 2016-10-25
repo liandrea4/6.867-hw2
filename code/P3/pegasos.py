@@ -13,6 +13,12 @@ def find_L2_margin(weight):
 		cum_sum += weight[i]**2
 	return cum_sum**(0.5)
 
+def run_kernalized_pegasos(X, Y, reg_parameter, K, max_epochs):
+	t = 0
+	epoch = 0
+
+	return
+
 def run_pegasos(X, Y, reg_parameter, max_epochs):
 	t = 0
 	epoch = 0
@@ -20,6 +26,7 @@ def run_pegasos(X, Y, reg_parameter, max_epochs):
 	weights = numpy.array([0.0] * weights_len)
 	weights.reshape(weights_len,1)
 	weights_matrix = [weights] * (max_epochs * len(X)+2)
+	weight_bias = 0
 
 	step_size = 0
 	while (epoch < max_epochs):
@@ -36,12 +43,17 @@ def run_pegasos(X, Y, reg_parameter, max_epochs):
 				a = numpy.dot((1 - step_size*reg_parameter), weights_matrix[t])
 				constant = step_size * Y[i]
 				b = numpy.dot(constant, X[i])
+
 				weights_matrix[t+1] = a+b
+				weight_bias = weight_bias + constant
+
 			else:
 				weights_matrix[t+1] = numpy.dot((1 - step_size*reg_parameter) , weights_matrix[t])
 
 	print "margin: ", 1.0/(find_L2_margin(weights_matrix[-1]))
-	return weights_matrix[-1]
+	print "weight bias: ", weight_bias
+
+ 	return weight_bias, weights_matrix[-1]
 
 
 if __name__ == '__main__':
@@ -51,7 +63,7 @@ if __name__ == '__main__':
 	Y = train[:,2:3]
 
 	epochs = 100;
-	lmbda = 2**(-10);
+	lmbda = 2**(-2);
 
 
 	weights = run_pegasos(X, Y, lmbda, epochs)
