@@ -20,9 +20,6 @@ def run_pegasos(X, Y, reg_parameter, max_epochs):
 	weights.reshape(2,1)
 	weights_matrix = [weights] * (max_epochs * len(X)+2)
 
-	print len(X)
-	
-	
 	step_size = 0
 	while (epoch < max_epochs):
 		epoch +=1
@@ -35,11 +32,11 @@ def run_pegasos(X, Y, reg_parameter, max_epochs):
 			inner_product = numpy.dot(weights_matrix[t].reshape(1,2), X[i].reshape(2,1))
 
 			if numpy.dot(Y[i], inner_product) < 1:
-	
+
 				a = numpy.dot((1 - step_size*reg_parameter), weights_matrix[t].reshape(2,1))
 				constant = step_size * Y[i]
 				b = numpy.dot(constant[0], X[i].reshape(2,1))
-		
+
 				print "in for loop t", t
 				weights_matrix[t+1] = a+b
 			else:
@@ -48,7 +45,7 @@ def run_pegasos(X, Y, reg_parameter, max_epochs):
 				weights_matrix[t+1] = numpy.dot((1 - step_size*reg_parameter) , weights_matrix[t])
 
 
-	print "margin: ", 1.0/(find_L2_margin(weights_matrix[-1]))			
+	print "margin: ", 1.0/(find_L2_margin(weights_matrix[-1]))
 	return weights_matrix[-1]
 
 

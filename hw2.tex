@@ -85,7 +85,7 @@ and in the case of L2 regularization,
 $$||w|| = |w|_2 = \sqrt{w_1^2 + ... + w_n^2}$$
 Gradient descent was run with this objective function on the training dataset \texttt{data1\_train.csv} with $\lambda = 0$. We observed how the weight vector changed as a function of the number of iterations of gradient descent across various initial guesses, step sizes, and convergence criterion. There were three key findings that we were able to make. First, we saw that the ultimate convergence weight was heavily dependent on the initial guess. This actually makes a good deal of sense because of the fact that there are infinitely many ways to perfectly separate a dataset that's linearly separable. The second observation was that $w_{0}$ and $w_{1}$ always decreased as number of iterations increased whereas $w_{2}$ also increased. Finally, we saw that the convergence weight values were all within the same order of magnitude as the initial guess. This makes intuitive sense since we know from class that in the case of linearly separable data, the optimization aims to make the weights as large as possible. \\
 
-When $\lambda = 1$, we see drastically different behavior in how the weight vector changes throughout the course of the gradient descent. The primary difference is the fact that $w_{0}, w_{1}, and w_{2}$ all converge to much smaller values. For example, when we set the initial guesses to be $100$ for all 3 components of the weight vector, the converged weights were two orders of magnitude less than the initial guesses. The reason for this phenomenon is due to the regularization penalty incurred when we set $\lambda = 1$
+When $\lambda = 1$, we see drastically different behavior in how the weight vector changes throughout the course of the gradient descent. The primary difference is the fact that $w_{0}, w_{1},$ and $w_{2}$ all converge to much smaller values. For example, when we set the initial guesses to be $100$ for all 3 components of the weight vector, the converged weights were two orders of magnitude less than the initial guesses. The reason for this phenomenon is due to the regularization penalty incurred when we set $\lambda = 1$
 
 \subsection{L1 regularization}
 In the case of L1 regularization, the objective function is the same except that $||w^2_2||$ becomes replaced with $||w_1||$, whereby $||w_1||$ is defined by:
@@ -272,7 +272,7 @@ Solving for $x$ when $C=1$, we get that $
 \end{bmatrix}^T
 $. This indicates that the first and third samples are support vectors because $0 \leq \alpha_i \leq C$. \\
 
-Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1). \\
+Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1). Generally however, the linear separator performed best on linearly separable data and classification accuracy in training, validation, and testing datasets clearly suffered for datasets that were not linearly separable (especially datasets 2 and 4). \\
 
 It is interesting to note that due to numerical rounding and errors, the $\alpha$ values obtained were not exactly equal to 0 or $C$, but instead usually varied by a small threshold. In our case, we chose a threshold of $0.00001$ in order to filter out $\alpha$ values extremely close to 0 or $C$ and select for "true" support vectors. Varying this threshold however could change the classification of data as support vectors or not, and this could ultimately affect the accuracy and error rate of our classifier.
 
@@ -306,7 +306,7 @@ It is interesting to note that due to numerical rounding and errors, the $\alpha
 \end{table}
 
 \subsection{Dual form with kernels}
-We here extend our dual form SVM to take kernel functions and kernel matrices as input. This has important implications for a number of reasons including performance and minimizing the cost of operations, as well as space and storage. We here implemented the dual form of SVMs with kernels for two kernel functions: (1) linear kernels, and (2) Gaussian radial basis function (RBF) kernels, while varying the value of $C$. Classification for an SVM using the Gaussian RBF kernel with $C$ values of $0.1$ and $100$ is illustrated for each of the four datasets in Figure 3. \\
+We here extend our dual form SVM to take kernel functions and kernel matrices as input. This has important implications for a number of reasons including performance and minimizing the cost of operations, as well as space and storage. We here implemented the dual form of SVMs with kernels for two kernel functions: (1) linear kernels, and (2) Gaussian radial basis function (RBF) kernels, while varying the value of $C$. Classification for an SVM using the Gaussian RBF kernel with $C$ values of $0.1$ and $100$ is illustrated for each of the four datasets in Figure 3. As can be seen from the plots for $C=0.1$ and $C=100$, as the value of $C$ increases, the model seeks to fit the data more closely. This is because at large values of $C$, which is the regularization parameter, slackness is penalized more. Thus, slack variables which allow the soft-SVM to have some training errors in order to be more generalizable, appear less at extremely large values of $C$ and the model is forced to more closely fit the training data. \\
 
 \begin{figure}[width=\linewidth]
 \centering
@@ -323,8 +323,7 @@ We here extend our dual form SVM to take kernel functions and kernel matrices as
 \caption{Training and validation decision boundary}
 \end{figure}
 
-
-As the value of $C$ increases, on a conceptual level, the margin error should decrease. This makes intuitive sense because $C$ in part determines the regularization parameter in penalizing error, so as the regularization penalty increases, the margin error $\frac{1}{||w||}$ should decrease. This is only true up to a point however, and beyond this threshold, increasing the value of $C$ to $\infty$ will not always continue to decrease the margin error. \\
+Furthermore, as the value of $C$ increases, on a conceptual level, the margin error should decrease. This makes intuitive sense because $C$ is the regularization parameter on the slack variables. Thus, as discuss, as the penalization on the slack variables increases, the weights must increase in order to accommodate for a closer fit to the training data. The margin error, which is defined as the $\frac{1}{||w||}$ should therefore decrease. This is only true up to a point however, because at extremely high values of $C$ when all slackness has been virtually eliminated, the weights will only continue to increase until it is able to completely fit the data. Beyond this point, increasing the value of $C$ should not force the weights to increase as well if they can sufficiently capture the data, and thus, the margin error should plateau after a certain point. \\
 
 As the value $C$ was increased, the number of support vectors generally did not show any noticeable or significant trends with a linear kernel. For all the data sets for varying values of $C$, the number of support vectors stayed roughly constant at around 3 or 4. However, for the Gaussian RBF kernel, the number of support vectors generally increased as the value of $C$ increased until a certain point (generally around $C=1$), after which the number of support vectors plateaued or even decreased. This data for the Gaussian RBF is summarized in Table 4.
 
@@ -342,12 +341,12 @@ As the value $C$ was increased, the number of support vectors generally did not 
   \caption{Number of support vectors by C value}
 \end{table}
 
-It is interesting to note that simply maximizing the geometric margin $\frac{1}{||w||}$ on the training set is not an optimal criterion for selecting $C$. This is because this decrease in the value of $C$ would maximize the geometric margin, but would additionally reduce the number of support vectors. If this criterion were maximized therefore, the support vectors might be reduced to an extent such that the model would no longer fully represent the training data. An alternative criterion which could be used for selecting $C$ could be to optimize the ratio of the number of support vectors to the total number of samples in the training data. This would ensure that the model trained would fully represent the data without extreme overfitting or underfitting.
+It is interesting to note that simply maximizing the geometric margin $\frac{1}{||w||}$ on the training set is not an optimal criterion for selecting $C$. This is because this decrease in the value of $C$ would maximize the geometric margin, but would additionally reduce the number of support vectors. Furthermore, at extremely small values of $C$, the penalization on the slackness variables drops out, and the slack variables are able to grow without bound. In this case, the weights would go to 0, and the slack variables would adjust to fully account for the data. This would not sufficiently train the weights of the model, and would instead overfit the slack variables to the training set but result in extremely poor classification accuracy for other data sets. An alternative criterion which could be used for selecting $C$ could be to optimize the ratio of the number of support vectors to the total number of samples in the training data. This would ensure that the model trained would fully represent the data without extreme overfitting or underfitting.
 
 \section{Pegasos}
 
 In this section, we use the Pegasos algorithm to solve the following formulation of Soft-SVM: \\
-$$min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  max \{0,1 - y_i(w^T x_i)\}$$\\
+$$\min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  \max \{0,1 - y_i(w^T x_i)\}$$\\
 We choose to use Pegasos because it combines together multiple good ideas such as hinge loss, L2 regularization, stochastic (sub)-gradient descent, and a decaying step-size. The following table shows the impact of $\lambda$ (regularization constant) on the margin. It indeed matches our understanding of the objective function because lower regularization means larger slack variables which lead to smaller margins. The reason for this is because $1-\epsilon_i$ governs the width of the margin.
 
 \begin{table}
@@ -356,12 +355,12 @@ We choose to use Pegasos because it combines together multiple good ideas such a
       \hline
        $\lambda$& $2^1$       & $2^{-1}$&  $2^{-3}$& $2^{-5}$&  $2^{-7}$&  $2^{-10}$ \\ \hline
        margin       & $\infty$     & $1.134$&   $0.820$& $0.642$&  $0.547$&   $0.389$  \\ \hline
-     
+
     \end{tabular}
   \end{center}
   \caption{SVM margin as a function of $\lambda$}
 \end{table}
- 
+
 \section{Handwritten digit recognition}
 Here we investigate the performance of the algorithms implemented on handwritten digit recognition in the MNIST dataset.
 
@@ -398,14 +397,14 @@ This analysis was conducted for both normalized data and not normalized data. In
 
 \subsection{Gaussian RBF SVM}
 
-We additionally investigated the classification accuracy of the Gaussian RBF SVM on the MNIST dataset with selection of hyperparameters through validation. Here, $C$ was selected from possible $C$ values of $[0.1, 1, 10, 100]$ and $\gamma$ was selected from possible values of $[1, 10, 100]$. For each of the pairwise classification tasks presented previously when evaluating the MNIST data using logistic regression and a linear SVM, optimal values for $C$ and $\gamma$ for the Gaussian RBF SVM were selected. These sets of hyperparameters were each associated with a classification error rate in the testing dataset. These results are presented in Table 5.
+We additionally investigated the classification accuracy of the Gaussian RBF SVM on the MNIST dataset with selection of hyperparameters through validation. Here, $C$ was selected from possible $C$ values of $[0.2, 0.4, 0.6, 0.8, 1]$ and $\gamma$ was selected from possible values of $[0.5, 1, 5, 10]$. For each of the pairwise classification tasks presented previously when evaluating the MNIST data using logistic regression and a linear SVM, optimal values for $C$ and $\gamma$ for the Gaussian RBF SVM were selected. These sets of hyperparameters were each associated with a classification error rate in the testing dataset. These results are presented in Table 5.
 
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c | }
       \hline
-                     & Optimal $C$    & Optimal $\gamma$     & Testing error      \\ \hline
-      1 vs. 7        &                &                      &                    \\ \hline
+                     & $C^*$          & $\gamma^*$           & Testing error      \\ \hline
+      1 vs. 7        & 0.4            & 0.5                  & 0.0                \\ \hline
       3 vs. 5        &                &                      &                    \\ \hline
       4 vs. 9        &                &                      &                    \\ \hline
       even vs. odd   &                &                      &                    \\ \hline
