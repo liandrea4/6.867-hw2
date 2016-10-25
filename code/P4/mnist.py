@@ -46,12 +46,12 @@ file_num = 'MNIST'
 
 print "Running SVM..."
 start = datetime.now()
-run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, threshold, b_threshold, file_num)
+run_slack_var_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, C, threshold, b_threshold)
 # run_slack_var_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold)
 slack_duration = datetime.now() - start
 
 start = datetime.now()
-run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C, threshold, b_threshold, gamma, file_num)
+run_kernel_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, C, threshold, b_threshold, gamma)
 # run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, threshold, b_threshold)
 kernel_duration = datetime.now() - start
 

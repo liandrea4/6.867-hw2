@@ -92,13 +92,13 @@ def calculate_b_kernel(x, y, alpha_vals, C, threshold, b_threshold, kernel_fn):
 
 ###### Big picture methods ######
 
-def run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, threshold, b_threshold, file_num):
+def run_slack_var_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, C, threshold, b_threshold):
 
   ###### Training ######
 
   alpha_vals = solve_dual_svm_slack(x_training, y_training, C)
   weight_vector = train_model(x_training, y_training, alpha_vals, threshold)
-  print "weight_vector: ", weight_vector
+  # print "weight_vector: ", weight_vector
 
   b = calculate_b_slack(weight_vector, x_training, y_training, alpha_vals, C, threshold, b_threshold)
   print "b: ", b
@@ -117,15 +117,18 @@ def run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, thresho
   validation_error_rate, validation_errors = get_classification_error_rate_slack(x_validate, y_validate, weight_vector, b)
   print "validation_error_rate: ", validation_error_rate
 
-  for error in validation_errors:
-    casted_array = np.array([ float(val) for val in error ])
-    reshaped_array = np.reshape(casted_array, (28, 28))
-    plt.imshow(reshaped_array, cmap='Greys_r')
-    plt.title("classification=1, actual=7")
-    plt.show()
+  testing_error_rate, testing_errors = get_classification_error_rate_slack(x_testing, y_testing, weight_vector, b)
+  print "testing_error_rate: ", testing_error_rate
+
+  # for error in validation_errors:
+  #   casted_array = np.array([ float(val) for val in error ])
+  #   reshaped_array = np.reshape(casted_array, (28, 28))
+  #   plt.imshow(reshaped_array, cmap='Greys_r')
+  #   plt.title("classification=1, actual=7")
+  #   plt.show()
 
 
-def run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C, threshold, b_threshold, gamma, file_num):
+def run_kernel_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, C, threshold, b_threshold, gamma):
 
   ###### Training ######
 
@@ -151,6 +154,9 @@ def run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C,
 
   validation_error_rate = get_classification_error_rate_kernel(x_validate, y_validate, alpha_vals, b, kernel_fn)
   print "validation_error_rate: ", validation_error_rate
+
+  testing_error_rate = get_classification_error_rate_kernel(x_testing, y_testing, alpha_vals, b, kernel_fn)
+  print "testing_error_rate: ", testing_error_rate
 
 
 def run_slack_var_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold):
