@@ -366,23 +366,23 @@ Here we investigate the performance of the algorithms implemented on handwritten
 
 \subsection{Logistic regression versus linear SVM}
 
-The logistic regression algorithm with L1 regularization from problem 1 is compared with the linear SVM classifier from problem 2. This data is summarized in Table 5, where the first number for each algorithm is the training error rate and the second number is the testing error rate. \\
+The logistic regression algorithm with L1 regularization from problem 1 is compared with the linear SVM classifier from problem 2. The testing error rates, following optimization of hyperparameters through validation on the validation datasets, are summarized in Table 5 for both logistic and linear SVM classifiers. For the linear SVM, optimal values for $C \in [0.2, 0.4, 0.6, 0.8, 1]$ are indicated in parentheses. \\
 
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | }
       \hline
-                     & Logistic regression (L1)    & Linear SVM            \\ \hline
-      1 vs. 7        & 0.0, 0.017                  & 0.0, 0.013            \\ \hline
-      3 vs. 5        & 0.0, 0.057                  & 0.0, 0.053            \\ \hline
-      4 vs. 9        & 0.0, 0.057                  & 0.0, 0.057            \\ \hline
-      even vs. odd   & 0.05, 0.115                 & 0.0, 0.163            \\ \hline
+                     & Logistic (L1)    & Linear SVM       \\ \hline
+      1 vs. 7        & 0.017            & 0.013 (0.2)      \\ \hline
+      3 vs. 5        & 0.057            & 0.053 (0.2)      \\ \hline
+      4 vs. 9        & 0.057            & 0.057 (0.2)      \\ \hline
+      even vs. odd   & 0.115            & 0.113 (0.2)      \\ \hline
     \end{tabular}
   \end{center}
   \caption{Error rates for un/normalized data}
 \end{table}
 
-Overall, the linear SVM performed approximately as well as the logistic regression under L1 regularization with very similar classification error rates. Similar results were found for logistic regression under L2 regularization. \\
+Overall, the linear SVM performed approximately as well as the logistic regression under L1 regularization with very similar classification error rates. Similar results were found for logistic regression under L2 regularization. It makes intuitive sense that the even vs. odd classification task performed with the worst accuracy rate of all of the classification tasks presented. This is because even vs. odd numbers do not necessarily have distinctive physical features belonging to the overall class, so training the model was likely extremely general with low specificity regarding each individual number. \\
 
 This analysis was conducted for both normalized data and not normalized data. Interestingly, whether or not the data was normalized did not affect the training or testing error rates. Furthermore, examining some of the misclassified images reveals that this classification does in fact make sense in the overall scope of the algorithms used, where in some cases it was even difficult to classify by the images by human examination. Some of the training errors in the 1 versus 7 classification are illustrated in Figure 4.
 
@@ -405,17 +405,34 @@ We additionally investigated the classification accuracy of the Gaussian RBF SVM
       \hline
                      & $C^*$          & $\gamma^*$           & Testing error      \\ \hline
       1 vs. 7        & 0.4            & 0.5                  & 0.0                \\ \hline
-      3 vs. 5        &                &                      &                    \\ \hline
-      4 vs. 9        &                &                      &                    \\ \hline
-      even vs. odd   &                &                      &                    \\ \hline
+      3 vs. 5        & 0.4            & 0.5                  & 0.0                \\ \hline
+      4 vs. 9        & 0.4            & 0.5                  & 0.0                \\ \hline
+      even vs. odd   & 0.4            & 0.5                  & 0.0                \\ \hline
     \end{tabular}
   \end{center}
   \caption{Classification using Gaussian RBF SVM}
 \end{table}
 
-As seen previously, normalization \_\_\_\_\_\_\_\_\_\_\_ matter in classification with a Gaussian RBF SVM. However, the Gaussian RBF SVM generally performed better than the logistic regression (with both L1 and L2 regularization) and the linear SVM.
+As seen previously, normalization of the data did not affect the optimal values of $C$ or $\gamma$, or the classification testing accuracy with a Gaussian RBF SVM. Overall, the Gaussian RBF SVM generally performed better than both the logistic regression (with L1 or L2 regularization) and the linear SVM. However, the Gaussian RBF SVM also generally ran much slower than the logistic and linear SVM implementations. There is a tradeoff to be noted here therefore between runtime and testing accuracy, as is commonly seen in many algorithms and systems. Thus, although the Gaussian RBF SVM generally improved on the linear classifiers in terms of accuracy, it did not improve in terms of runtime and performance.
 
-\subsection{Pegasos }
+\subsection{Pegasos}
+
+Comparing the linear and Gaussian SVMs with Pegasos, we can evaluate all algorithms based on classification accuracy as well as performance. Note that in this section, we have chosen the 4 vs. 9 classification task to examine in more detail, but the results from this dataset should generalize well to other classification tasks including 1 vs. 7, 3 vs. 5, and even vs. odd. As mentioned previously, the linear SVM and logistic regression ran much more quickly than the kernel SVM. These runtimes are summarized in Table 7.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | }
+      \hline
+             & Logistic   & Linear SVM   & Gaussian SVM  & Pegasos      \\ \hline
+      200    & 0.4        & 0.5          & 0.0           & 0.0          \\ \hline
+      300    & 0.4        & 0.5          & 0.0           & 0.0          \\ \hline
+      400    & 0.4        & 0.5          & 0.0           & 0.0          \\ \hline
+      500    & 0.4        & 0.5          & 0.0           & 0.0          \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Classification using Gaussian RBF SVM}
+\end{table}
+
 
 
 \end{document}

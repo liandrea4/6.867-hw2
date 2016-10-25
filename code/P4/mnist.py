@@ -1,9 +1,12 @@
 import sys
 sys.path.append('../P1')
 sys.path.append('../P2')
+sys.path.append('../P3')
 from generate_datasets    import *
 from svm_test             import *
 from logistic_regression  import *
+from pegasos              import run_pegasos
+from datetime             import datetime
 
 first_dataset = '4'
 second_dataset = '9'
@@ -31,23 +34,42 @@ y_testing = [1] * num_testing + [-1] * num_testing
 # y_validate = ( [1] * num_validation + [-1] * num_validation ) * 5
 # y_testing = ( [1] * num_testing + [-1] * num_testing ) * 5
 
-C = 100.
+C = 1.
 threshold = 0.000001
-b_threshold = 1
+b_threshold = 5
 gamma = 1.
 # kernel_fn = linear_kernel_fn
 kernel_fn = make_gaussian_rbf_kernel_fn(gamma)
+max_epochs = 100
+lambda_val = 2**(-10)
 file_num = 'MNIST'
 
-print "Running slack SVM..."
-# run_slack_var_svm(x_training, y_training, x_testing, y_testing, C, threshold, b_threshold, file_num)
-run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold)
+print "Running SVM..."
+start = datetime.now()
+run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, threshold, b_threshold, file_num)
+# run_slack_var_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold)
+slack_duration = datetime.now() - start
+
+start = datetime.now()
+run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C, threshold, b_threshold, gamma, file_num)
+# run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, threshold, b_threshold)
+kernel_duration = datetime.now() - start
+
+
+print "Running logistic regression..."
+start = datetime.now()
+logistic_regression(x_training, y_training, x_validate, y_validate, x_testing, y_testing)
+logistic_duration = datetime.now() - start
+
+
+# print "Running pegasos..."
+# weight_vector = run_pegasos(x_training, y_training, lambda_val, max_epochs)
+# print len(weight_vector), 28 * 28
 
 print "datasets: ", first_dataset, second_dataset
-
-# print "Running logistic regression..."
-# logistic_regression(x_training, y_training, x_validate, y_validate, x_testing, y_testing)
-
+print "slack duration: ", slack_duration
+print "kernel_duration: ", kernel_duration
+print "logistic_duration: ", logistic_duration
 
 
 # SVM (slack):

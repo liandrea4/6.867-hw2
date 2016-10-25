@@ -152,7 +152,51 @@ def run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C,
   validation_error_rate = get_classification_error_rate_kernel(x_validate, y_validate, alpha_vals, b, kernel_fn)
   print "validation_error_rate: ", validation_error_rate
 
-def run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold):
+
+def run_slack_var_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold):
+  C_vals = [ 0.2, 0.4, 0.6, 0.8, 1 ]
+  C_opt = 0
+  b_opt = 0
+  weights_opt = []
+  min_error_rate = float('inf')
+
+  for C in C_vals:
+
+    alpha_vals = solve_dual_svm_slack(x_training, y_training, C)
+    weight_vector = train_model(x_training, y_training, alpha_vals, threshold)
+
+    b = calculate_b_slack(weight_vector, x_training, y_training, alpha_vals, C, threshold, b_threshold)
+    print "b: ", b
+
+    if b is None:
+      print "No support vectors, skipping C=", C
+      continue
+
+    validation_error_rate, validation_errors = get_classification_error_rate_slack(x_validate, y_validate, weight_vector, b)
+    print "validation_error_rate: ", validation_error_rate
+
+    if validation_error_rate < min_error_rate:
+      print "Updating C..."
+      C_opt = C
+      b_opt = b
+      weights_opt = weight_vector
+      min_error_rate = validation_error_rate
+
+  print "C_opt: ", C_opt
+
+  testing_error_rate, testing_errors = get_classification_error_rate_slack(x_testing, y_testing, weights_opt, b_opt)
+  print "testing_error_rate: ", testing_error_rate
+
+
+  # for error in validation_errors:
+  #   casted_array = np.array([ float(val) for val in error ])
+  #   reshaped_array = np.reshape(casted_array, (28, 28))
+  #   plt.imshow(reshaped_array, cmap='Greys_r')
+  #   plt.title("classification=1, actual=7")
+  #   plt.show()
+
+
+def run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, threshold, b_threshold):
   C_vals = [ 0.2, 0.4, 0.6, 0.8, 1 ]
   gamma_vals = [ 0.5, 1, 5, 10]
 
@@ -160,13 +204,11 @@ def run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_
   gamma_opt = 0
   b_opt = 0
   alphas_opt = []
-  kernel_fn_opt = None
   min_error_rate = float('inf')
 
   for C in C_vals:
     for gamma in gamma_vals:
       print "C: ", C, "  gamma: ", gamma
-      kernel_fn = make_gaussian_rbf_kernel_fn(gamma)
 
       print "Solving for alphas..."
       alpha_vals = solve_dual_svm_kernel(x_training, y_training, C, kernel_fn)
@@ -192,12 +234,11 @@ def run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_
         gamma_opt = gamma
         b_opt = b
         alphas_opt = alpha_vals
-        kernel_fn_opt = kernel_fn
         min_error_rate = validation_error_rate
 
   print "C_opt: ", C_opt, "   gamma_opt: ", gamma_opt
 
-  testing_error_rate = get_classification_error_rate_kernel(x_testing, y_testing, alphas_opt, b_opt, kernel_fn_opt)
+  testing_error_rate = get_classification_error_rate_kernel(x_testing, y_testing, alphas_opt, b_opt, kernel_fn)
   print "testing_error_rate: ", testing_error_rate
 
 
