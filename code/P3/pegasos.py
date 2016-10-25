@@ -13,7 +13,10 @@ def find_L2_margin(weight):
 		cum_sum += weight[i]**2
 	return cum_sum**(0.5)
 
-def run_kernalized_pegasos():
+def run_kernalized_pegasos(X, Y, reg_parameter, K, max_epochs):
+	t = 0 
+	epoch = 0
+	
 	return
 
 def run_pegasos(X, Y, reg_parameter, max_epochs):
@@ -55,7 +58,7 @@ def run_pegasos(X, Y, reg_parameter, max_epochs):
 
 	print "margin: ", 1.0/(find_L2_margin(weights_matrix[-1]))
 	print "weight bias: ", weight_bias			
-	return weight_bias, weights_matrix[-1]
+ 	return weight_bias, weights_matrix[-1]
 
 
 if __name__ == '__main__':

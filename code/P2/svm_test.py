@@ -153,8 +153,9 @@ def run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C,
   print "validation_error_rate: ", validation_error_rate
 
 def run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold):
-  C_vals = [0.1, 1, 10, 100]
-  gamma_vals = [1, 10, 100]
+  C_vals = [ 0.2, 0.4, 0.6, 0.8, 1 ]
+  gamma_vals = [ 0.5, 1, 5, 10]
+
   C_opt = 0
   gamma_opt = 0
   b_opt = 0

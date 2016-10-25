@@ -5,12 +5,15 @@ from generate_datasets    import *
 from svm_test             import *
 from logistic_regression  import *
 
+first_dataset = '4'
+second_dataset = '9'
+
 print "Constructing datasets..."
 all_datasets = make_all_datasets()
 normalized_datasets = normalize_datasets(all_datasets)
 
-training_a, validation_a, testing_a = normalized_datasets['4'][0], normalized_datasets['4'][1], normalized_datasets['4'][2]
-training_b, validation_b, testing_b = normalized_datasets['9'][0], normalized_datasets['9'][1], normalized_datasets['9'][2]
+training_a, validation_a, testing_a = normalized_datasets[first_dataset][0], normalized_datasets[first_dataset][1], normalized_datasets[first_dataset][2]
+training_b, validation_b, testing_b = normalized_datasets[second_dataset][0], normalized_datasets[second_dataset][1], normalized_datasets[second_dataset][2]
 
 x_training = training_a + training_b
 y_training = [1] * num_training + [-1] * num_training
@@ -39,6 +42,8 @@ file_num = 'MNIST'
 print "Running slack SVM..."
 # run_slack_var_svm(x_training, y_training, x_testing, y_testing, C, threshold, b_threshold, file_num)
 run_kernel_svm_validation(x_training, y_training, x_validate, y_validate, x_testing, y_testing, threshold, b_threshold)
+
+print "datasets: ", first_dataset, second_dataset
 
 # print "Running logistic regression..."
 # logistic_regression(x_training, y_training, x_validate, y_validate, x_testing, y_testing)
