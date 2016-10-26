@@ -361,6 +361,26 @@ We choose to use Pegasos because it combines together multiple good ideas such a
   \caption{SVM margin as a function of $\lambda$}
 \end{table}
 
+After creating the regular Pegasos algorithm, we then proceeded to create the kernelized version of the algorithm to solve the following Soft-SVM problem: \\
+$$\min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  \max \{0,1 - y_i(w^T \phi(x_i))\}$$\\
+
+This formulation outputs an array of $\alpha$ values that enables us to make predictions through utilizing the following equation: \\
+$$F(x) = \sum_{j=1}^{l} \alpha_jK(x_j,x)$$ (Note that due to the fact that the $\alpha$ values are able to be negative we don't multiply by $y$) \\
+Additionally, we did find that this kernelized algorithm gave us a sparse solution similar to what we saw with the dual SVM. Using $\lambda = 0.02$ and $\gamma = 2^2$ we only saw 57 nonzero $\alpha$ values out of a possible 400. Using a fixed $\lambda$ value of $0.02$, table 5 shows the relationship between $\gamma$ and the number of support vectors produced.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | c | c |}
+      \hline
+       $\gamma$& $2^2$       & $2^{1}$&  $2^{-1}$& $2^{-2}$\\ \hline
+       # of SVMs & $57$     & $37     $&  $30$     & $28$ \\ \hline
+
+    \end{tabular}
+  \end{center}
+  \caption{Number of SVMs as a function of $\gamma$}
+\end{table}
+Furthermore we saw that the margins of our decision boundaries increased as $\gamma$ decreased. This makes intuitive sense $\gamma$ is negatively correlated to bandwidth. Our results compared very well against the results we obtained in the previous section. We saw that the exact performance depended heavily on what we set as our max epochs. Ultimately, this leads to a tradeoff between run time and classification accuracy. 
+
 \section{Handwritten digit recognition}
 Here we investigate the performance of the algorithms implemented on handwritten digit recognition in the MNIST dataset.
 
