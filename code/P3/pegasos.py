@@ -45,6 +45,9 @@ def run_kernalized_pegasos(X, Y, reg_parameter, K, max_epochs):
 			else:
 				A[i] = numpy.dot((1 - step_size*reg_parameter), A[i])
 			print "t", t
+
+	print "number of non-zero SVMs", numpy.count_nonzero(A)
+	print "total length of alpha", len(A)
 	return A
 
 
@@ -92,8 +95,8 @@ if __name__ == '__main__':
 	Y = train[:,2:3]
 
 	epochs = 10;
-	lmbda = 2**(-2);
-	gauss_kernel = make_gaussian_rbf_kernel_fn(2**1)
+	lmbda = 0.02;
+	gauss_kernel = make_gaussian_rbf_kernel_fn(2**(2))
 
 
 	print run_kernalized_pegasos(X, Y, lmbda, gauss_kernel, epochs)
