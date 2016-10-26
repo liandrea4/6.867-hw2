@@ -45,6 +45,7 @@ def get_classification_error_rate_kernel(x, y, alpha_vals, b, kernel_fn):
 
   return float(num_errors) / len(x)
 
+
 ##############################################
 ################# TRAINING ###################
 ##############################################

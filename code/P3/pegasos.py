@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import pylab             as pl
 from sklearn             import linear_model
 from plot_svm_boundary   import *
-from svm_test            import predict_svm_kernel, get_classification_error_rate_kernel
 from svm                 import make_gaussian_rbf_kernel_fn, linear_kernel_fn
 import numpy
 import math
@@ -15,6 +14,28 @@ def find_L2_margin(weight):
 	for i in range(len(weight)):
 		cum_sum += weight[i]**2
 	return cum_sum**(0.5)
+
+def predict_pegasos_kernel(x, x_training, y_training, alpha_vals, b, kernel_fn):
+  summed = 0
+  for x_i, y_i, alpha_i in zip(x_training, y_training, alpha_vals):
+    summed += alpha_i * kernel_fn(x_i, x)
+
+  prediction = summed + b
+  if prediction > 0:
+    return 1
+  elif prediction < 0:
+    return -1
+  else:
+    return 0
+
+def get_classification_error_rate_kernel_pegasos(x, y, alpha_vals, b, kernel_fn):
+  num_errors = 0
+  for x_i, y_i in zip(x,y):
+    prediction = predict_pegasos_kernel(x_i, x, y, alpha_vals, b, kernel_fn)
+    if prediction != y_i:
+      num_errors += 1
+
+  return float(num_errors) / len(x)
 
 def run_kernalized_pegasos(X, Y, reg_parameter, K, max_epochs):
 	t = 0
@@ -95,13 +116,13 @@ if __name__ == '__main__':
   y_training = train[:, 2:3].copy()
 
   print "calculating alphas..."
-  alpha_vals = run_kernalized_pegasos(x_training, y_training, lmbda, linear_kernel_fn, epochs)
+  alpha_vals = run_kernalized_pegasos(x_training, y_training, lmbda, kernel_fn, epochs)
   print "alpha_vals: ", alpha_vals, len(alpha_vals)
 
-  training_error = get_classification_error_rate_kernel(x_training, y_training, alpha_vals, b, kernel_fn)
+  training_error = get_classification_error_rate_kernel_pegasos(x_training, y_training, alpha_vals, b, kernel_fn)
   print "training_error: ", training_error
 
-  plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
+  plotDecisionBoundary_kernel(x_training, y_training, predict_pegasos_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
     title = 'Pegasos Training, data' + str(file_num))
 
 
