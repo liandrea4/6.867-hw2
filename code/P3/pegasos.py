@@ -1,25 +1,20 @@
 import sys
-import matplotlib.pyplot    as plt
+sys.path.append('../P2')
+import matplotlib.pyplot as plt
+import pylab             as pl
+from sklearn             import linear_model
+from plot_svm_boundary   import *
+from svm_test            import predict_svm_kernel, get_classification_error_rate_kernel
+from svm                 import make_gaussian_rbf_kernel_fn, linear_kernel_fn
 import numpy
 import math
-import sys
-import pylab as pl
-from plotBoundary import *
-from sklearn                import linear_model
+
 
 def find_L2_margin(weight):
 	cum_sum = 0
 	for i in range(len(weight)):
 		cum_sum += weight[i]**2
 	return cum_sum**(0.5)
-
-def make_gaussian_rbf_kernel_fn(gamma):
-  def gaussian_rbf_kernel_fn(x_i, x_j):
-    x_i_np = numpy.array(x_i)
-    x_j_np = numpy.array(x_j)
-    magnitude = numpy.linalg.norm(x_i_np - x_j_np) ** 2
-    return math.exp(-1 * gamma * magnitude)
-  return gaussian_rbf_kernel_fn
 
 def run_kernalized_pegasos(X, Y, reg_parameter, K, max_epochs):
 	t = 0
@@ -29,22 +24,23 @@ def run_kernalized_pegasos(X, Y, reg_parameter, K, max_epochs):
 
 	while(epoch < max_epochs):
 		epoch +=1
-		print "epoch", epoch
+
 		for i in range(len(X)):
 			t+=1
 			step_size = (1/(t * reg_parameter))
-			inner_product = 0 
+			inner_product = 0
+
 			for j in range(len(X)):
 				inner_product += numpy.dot(A[j], K(X[j], X[i]))
+
+			a = numpy.dot((1 - step_size*reg_parameter), A[i])
 			if numpy.dot(Y[i], inner_product) < 1:
-				a = numpy.dot((1 - step_size*reg_parameter), A[i])
-				print "a", a
 				b = numpy.dot(step_size, Y[i])
-				print "b", b[0]
-				A[i] = numpy.add(a,b[0])
+				A[i] = a + b[0]
+
 			else:
-				A[i] = numpy.dot((1 - step_size*reg_parameter), A[i])
-			print "t", t
+				A[i] = a
+
 	return A
 
 
@@ -86,17 +82,26 @@ def run_pegasos(X, Y, reg_parameter, max_epochs):
 
 
 if __name__ == '__main__':
+  file_num = sys.argv[1]
 
-	train = loadtxt('../data/data3_train.csv')
-	X = train[:,0:2]
-	Y = train[:,2:3]
+  epochs = 30
+  lmbda = 0.02
+  # kernel_fn = linear_kernel_fn
+  kernel_fn = make_gaussian_rbf_kernel_fn(0.02)
+  b = 0
 
-	epochs = 10;
-	lmbda = 2**(-2);
-	gauss_kernel = make_gaussian_rbf_kernel_fn(2**1)
+  train = loadtxt('../data/data'+file_num+'_train.csv')
+  x_training = train[:, 0:2].copy()
+  y_training = train[:, 2:3].copy()
 
+  print "calculating alphas..."
+  alpha_vals = run_kernalized_pegasos(x_training, y_training, lmbda, linear_kernel_fn, epochs)
+  print "alpha_vals: ", alpha_vals, len(alpha_vals)
 
-	print run_kernalized_pegasos(X, Y, lmbda, gauss_kernel, epochs)
-	#print run_pegasos(X, Y, lmbda, epochs)
+  training_error = get_classification_error_rate_kernel(x_training, y_training, alpha_vals, b, kernel_fn)
+  print "training_error: ", training_error
+
+  plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
+    title = 'Pegasos Training, data' + str(file_num))
 
 

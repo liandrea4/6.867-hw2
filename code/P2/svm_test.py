@@ -134,6 +134,8 @@ def run_kernel_svm(x_training, y_training, x_validate, y_validate, x_testing, y_
 
   print "Solving for alphas..."
   alpha_vals = solve_dual_svm_kernel(x_training, y_training, C, kernel_fn)
+
+  print "alpha_vals: ", alpha_vals, len(alpha_vals)
   # weight_vector = train_model(x_training, y_training, alpha_vals, threshold)
 
   print "Solving for b..."
@@ -141,8 +143,8 @@ def run_kernel_svm(x_training, y_training, x_validate, y_validate, x_testing, y_
   print "b: ", b
 
   print "Plotting decision boundary..."
-  # plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
-  #   title = 'SVM Training, data' + str(file_num) + ', C=' + str(C))
+  plotDecisionBoundary_kernel(x_training, y_training, predict_svm_kernel, [-1, 0, 1], alpha_vals, b, kernel_fn,
+    title = 'SVM Training, data1, C=' + str(C))
 
   training_error_rate = get_classification_error_rate_kernel(x_training, y_training, alpha_vals, b, kernel_fn)
   print "training_error_rate: ", training_error_rate
@@ -267,12 +269,16 @@ if __name__ == '__main__':
   x_validate = validate[:, 0:2]
   y_validate = validate[:, 2:3]
 
+  testing = loadtxt('../data/data'+file_num+'_test.csv')
+  x_testing = testing[:, 0:2]
+  y_testing = testing[:, 2:3]
+
   # kernel_fn = linear_kernel_fn
   kernel_fn = make_gaussian_rbf_kernel_fn(gamma)
 
 
   # run_slack_var_svm(x_training, y_training, x_validate, y_validate, C, threshold, b_threshold, file_num)
-  run_kernel_svm(x_training, y_training, x_validate, y_validate, kernel_fn, C, threshold, b_threshold, gamma, file_num)
+  run_kernel_svm(x_training, y_training, x_validate, y_validate, x_testing, y_testing, kernel_fn, C, threshold, b_threshold, gamma)
 
   # train = loadtxt('../data/data'+file_num+'_train.csv')
   # x_training = train[:, 0:2].copy()
