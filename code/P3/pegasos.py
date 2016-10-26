@@ -60,16 +60,11 @@ def run_kernalized_pegasos(X, Y, reg_parameter, K, max_epochs):
 				A[i] = a + b[0]
 
 			else:
-<<<<<<< HEAD
-				A[i] = numpy.dot((1 - step_size*reg_parameter), A[i])
-			print "t", t
+				A[i] = a
 
 	print "number of non-zero SVMs", numpy.count_nonzero(A)
 	print "total length of alpha", len(A)
-=======
-				A[i] = a
 
->>>>>>> b210998ad9c294c02ec93ed3aeb181362ab39234
 	return A
 
 
@@ -123,15 +118,9 @@ if __name__ == '__main__':
   x_training = train[:, 0:2].copy()
   y_training = train[:, 2:3].copy()
 
-<<<<<<< HEAD
-	epochs = 10;
-	lmbda = 0.02;
-	gauss_kernel = make_gaussian_rbf_kernel_fn(2**(2))
-=======
   print "calculating alphas..."
   alpha_vals = run_kernalized_pegasos(x_training, y_training, lmbda, kernel_fn, epochs)
   print "alpha_vals: ", alpha_vals, len(alpha_vals)
->>>>>>> b210998ad9c294c02ec93ed3aeb181362ab39234
 
   training_error = get_classification_error_rate_kernel_pegasos(x_training, y_training, alpha_vals, b, kernel_fn)
   print "training_error: ", training_error

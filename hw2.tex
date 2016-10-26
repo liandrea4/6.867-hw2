@@ -83,7 +83,7 @@ where
 $$\textsc{NLL}(w, w_0) = \sum_i \log(1 + \exp(-y^{(i)} (w x^{(i)} + w_0)))$$
 and in the case of L2 regularization,
 $$||w|| = |w|_2 = \sqrt{w_1^2 + ... + w_n^2}$$
-Gradient descent was run with this objective function on the training dataset \texttt{data1\_train.csv} with $\lambda = 0$. We observed how the weight vector changed as a function of the number of iterations of gradient descent across various initial guesses, step sizes, and convergence criterion. There were three key findings that we were able to make. First, we saw that the ultimate convergence weight was heavily dependent on the initial guess. This actually makes a good deal of sense because of the fact that there are infinitely many ways to perfectly separate a dataset that's linearly separable. The second observation was that $w_{0}$ and $w_{1}$ always decreased as number of iterations increased whereas $w_{2}$ also increased. Finally, we saw that the convergence weight values were all within the same order of magnitude as the initial guess. This makes intuitive sense since we know from class that in the case of linearly separable data, the optimization aims to make the weights as large as possible. \\
+Gradient descent was run with this objective function on the training dataset \texttt{data1\_train.csv} with $\lambda = 0$. We observed how the weight vector changed as a function of the number of iterations of gradient descent across various initial guesses, step sizes, and convergence criterion. There were three key findings that we were able to make. First, we saw that the ultimate convergence weight was heavily dependent on the initial guess. This actually makes a good deal of sense because of the fact that there are infinitely many ways to perfectly separate a dataset that's linearly separable. The second observation was that $w_{0}$ and $w_{1}$ always decreased as number of iterations increased whereas $w_{2}$ also increased. Finally, we saw that the convergence weight values were all within the same order of magnitude as the initial guess. This makes intuitive sense since we know from class that in the case of linearly separable data, the optimization aims to make the weights as large as possible.
 
 When $\lambda = 1$, we see drastically different behavior in how the weight vector changes throughout the course of the gradient descent. The primary difference is the fact that $w_{0}, w_{1},$ and $w_{2}$ all converge to much smaller values. For example, when we set the initial guesses to be $100$ for all 3 components of the weight vector, the converged weights were two orders of magnitude less than the initial guesses. The reason for this phenomenon is due to the regularization penalty incurred when we set $\lambda = 1$
 
@@ -272,7 +272,7 @@ Solving for $x$ when $C=1$, we get that $
 \end{bmatrix}^T
 $. This indicates that the first and third samples are support vectors because $0 \leq \alpha_i \leq C$. \\
 
-Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1). Generally however, the linear separator performed best on linearly separable data and classification accuracy in training, validation, and testing datasets clearly suffered for datasets that were not linearly separable (especially datasets 2 and 4). \\
+Our implementation of the dual form of SVMs with slack variables was run on each of the four 2D datasets provided. With $C=1$, the decision boundaries and classification error rates were determined. This information is summarized in Figure 2 and Table 2, respectively. As can be seen from the classification error rates in training and validation, depending on the values of the trained parameters and the spread of the datasets, the classification error could be greater for the training data (as in dataset 2), for the validation data (as in dataset 4), or equal (as in dataset 1). Generally however, the linear separator performed best on linearly separable data and classification accuracy in training, validation, and testing datasets clearly suffered for datasets that were not linearly separable (especially datasets 2 and 4).
 
 It is interesting to note that due to numerical rounding and errors, the $\alpha$ values obtained were not exactly equal to 0 or $C$, but instead usually varied by a small threshold. In our case, we chose a threshold of $0.00001$ in order to filter out $\alpha$ values extremely close to 0 or $C$ and select for "true" support vectors. Varying this threshold however could change the classification of data as support vectors or not, and this could ultimately affect the accuracy and error rate of our classifier.
 
@@ -323,9 +323,9 @@ We here extend our dual form SVM to take kernel functions and kernel matrices as
 \caption{Training and validation decision boundary}
 \end{figure}
 
-Furthermore, as the value of $C$ increases, on a conceptual level, the margin error should decrease. This makes intuitive sense because $C$ is the regularization parameter on the slack variables. Thus, as the penalization on the slack variables increases, the weights must increase in order to accommodate for a closer fit to the training data. The margin error, which is defined as the $\frac{1}{||w||}$ should therefore decrease. This is only true up to a point however, because at extremely high values of $C$ when all slackness has been virtually eliminated, the weights will only continue to increase until it is able to completely fit the data. Beyond this point, increasing the value of $C$ should not force the weights to increase as well if they can sufficiently capture the data, and thus, the margin error should plateau after a certain point. \\
+Furthermore, as the value of $C$ increases, on a conceptual level, the margin error should decrease. This makes intuitive sense because $C$ is the regularization parameter on the slack variables. Thus, as the penalization on the slack variables increases, the weights must increase in order to accommodate for a closer fit to the training data. The margin error, which is defined as the $\frac{1}{||w||}$ should therefore decrease. This is only true up to a point however, because at extremely high values of $C$ when all slackness has been virtually eliminated, the weights will only continue to increase until it is able to completely fit the data. Beyond this point, increasing the value of $C$ should not force the weights to increase as well if they can sufficiently capture the data, and thus, the margin error should plateau after a certain point.
 
-As the value $C$ was increased, the number of support vectors generally did not show any noticeable or significant trends with a linear kernel. For all the data sets for varying values of $C$, the number of support vectors stayed roughly constant at around 3 or 4. However, for the Gaussian RBF kernel, the number of support vectors generally increased as the value of $C$ increased until a certain point (generally around $C=1$), after which the number of support vectors plateaued or even decreased. This data for the Gaussian RBF is summarized in Table 3. \\
+As the value $C$ was increased, the number of support vectors generally did not show any noticeable or significant trends with a linear kernel. For all the data sets for varying values of $C$, the number of support vectors stayed roughly constant at around 3 or 4. However, for the Gaussian RBF kernel, the number of support vectors generally increased as the value of $C$ increased until a certain point (generally around $C=1$), after which the number of support vectors plateaued or even decreased. This data for the Gaussian RBF is summarized in Table 3.
 
 \begin{table}
   \begin{center}
@@ -345,8 +345,8 @@ It is interesting to note that simply maximizing the geometric margin $\frac{1}{
 
 \section{Pegasos}
 
-In this section, we use the Pegasos algorithm to solve the following formulation of Soft-SVM: \\
-$$\min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  \max \{0,1 - y_i(w^T x_i)\}$$\\
+In this section, we use the Pegasos algorithm to solve the following formulation of Soft-SVM:
+$$\min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  \max \{0,1 - y_i(w^T x_i)\}$$
 We choose to use Pegasos because it combines together multiple good ideas such as hinge loss, L2 regularization, stochastic (sub)-gradient descent, and a decaying step-size. Table 4 shows the impact of $\lambda$ (regularization constant) on the margin. It indeed matches our understanding of the objective function because lower regularization means larger slack variables which lead to smaller margins. The reason for this is because $1-\epsilon_i$ governs the width of the margin.
 
 \begin{table}
@@ -361,32 +361,32 @@ We choose to use Pegasos because it combines together multiple good ideas such a
   \caption{SVM margin as a function of $\lambda$}
 \end{table}
 
-After creating the regular Pegasos algorithm, we then proceeded to create the kernelized version of the algorithm to solve the following Soft-SVM problem: \\
-$$\min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  \max \{0,1 - y_i(w^T \phi(x_i))\}$$\\
+After creating the regular Pegasos algorithm, we then proceeded to create the kernelized version of the algorithm to solve the following Soft-SVM problem:
+$$\min \frac{\lambda}{2} ||w||^2 + \frac{1}{n} \sum_{i=1}^{N}  \max \{0,1 - y_i(w^T \phi(x_i))\}$$
 
-This formulation outputs an array of $\alpha$ values that enables us to make predictions through utilizing the following equation: \\
-$$F(x) = \sum_{j=1}^{l} \alpha_jK(x_j,x)$$ (Note that due to the fact that the $\alpha$ values are able to be negative we don't multiply by $y$) \\
-Additionally, we did find that this kernelized algorithm gave us a sparse solution similar to what we saw with the dual SVM. Using $\lambda = 0.02$ and $\gamma = 2^2$ we only saw 57 nonzero $\alpha$ values out of a possible 400. Using a fixed $\lambda$ value of $0.02$, table 5 shows the relationship between $\gamma$ and the number of support vectors produced.
+This formulation outputs an array of $\alpha$ values that enables us to make predictions through utilizing the following equation:
+$$F(x) = \sum_{j=1}^{l} \alpha_jK(x_j,x)$$
+(Note that due to the fact that the $\alpha$ values are able to be negative we don't multiply by $y$). Additionally, we did find that this kernelized algorithm gave us a sparse solution similar to what we saw with the dual SVM. Using $\lambda = 0.02$ and $\gamma = 2^2$ we only saw 57 nonzero $\alpha$ values out of a possible 400. Using a fixed $\lambda$ value of $0.02$, table 5 shows the relationship between $\gamma$ and the number of support vectors produced.
 
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c | c | c | c |}
       \hline
-       $\gamma$& $2^2$       & $2^{1}$&  $2^{-1}$& $2^{-2}$\\ \hline
-       # of SVMs & $57$     & $37     $&  $30$     & $28$ \\ \hline
+       $\gamma$   & $2^2$       & $2^{1}$&  $2^{-1}$& $2^{-2}$\\ \hline
+       \# of SVMs & $57$     & $37     $&  $30$     & $28$ \\ \hline
 
     \end{tabular}
   \end{center}
   \caption{Number of SVMs as a function of $\gamma$}
 \end{table}
-Furthermore we saw that the margins of our decision boundaries increased as $\gamma$ decreased. This makes intuitive sense $\gamma$ is negatively correlated to bandwidth. Our results compared very well against the results we obtained in the previous section. We saw that the exact performance depended heavily on what we set as our max epochs. Ultimately, this leads to a tradeoff between run time and classification accuracy. 
+Furthermore we saw that the margins of our decision boundaries increased as $\gamma$ decreased. This makes intuitive sense $\gamma$ is negatively correlated to bandwidth. Our results compared very well against the results we obtained in the previous section. We saw that the exact performance depended heavily on what we set as our max epochs. Ultimately, this leads to a tradeoff between run time and classification accuracy.
 
 \section{Handwritten digit recognition}
 Here we investigate the performance of the algorithms implemented on handwritten digit recognition in the MNIST dataset.
 
 \subsection{Logistic regression versus linear SVM}
 
-The logistic regression algorithm with L1 regularization from problem 1 is compared with the linear SVM classifier from problem 2. The testing error rates, following optimization of hyperparameters through validation on the validation datasets, are summarized in Table 5 for both logistic and linear SVM classifiers. For the linear SVM, optimal values for $C \in [0.2, 0.4, 0.6, 0.8, 1]$ are indicated in parentheses. \\
+The logistic regression algorithm with L1 regularization from problem 1 is compared with the linear SVM classifier from problem 2. The testing error rates, following optimization of hyperparameters through validation on the validation datasets, are summarized in Table 5 for both logistic and linear SVM classifiers. For the linear SVM, optimal values for $C \in [0.2, 0.4, 0.6, 0.8, 1]$ are indicated in parentheses.
 
 \begin{table}
   \begin{center}
@@ -402,7 +402,7 @@ The logistic regression algorithm with L1 regularization from problem 1 is compa
   \caption{Error rates for un/normalized data}
 \end{table}
 
-Overall, the linear SVM performed slightly better than the logistic regression under L1 regularization. Similar results were found for logistic regression under L2 regularization. It makes intuitive sense that the even vs. odd classification task performed with the worst accuracy rate of all of the classification tasks presented. This is because even vs. odd numbers do not necessarily have distinctive physical features belonging to the overall class, so training the model was likely extremely general with low specificity regarding each individual number. \\
+Overall, the linear SVM performed slightly better than the logistic regression under L1 regularization. Similar results were found for logistic regression under L2 regularization. It makes intuitive sense that the even vs. odd classification task performed with the worst accuracy rate of all of the classification tasks presented. This is because even vs. odd numbers do not necessarily have distinctive physical features belonging to the overall class, so training the model was likely extremely general with low specificity regarding each individual number.
 
 This analysis was conducted for both normalized data and not normalized data. Interestingly, whether or not the data was normalized did not affect the training or testing error rates. Furthermore, examining some of the misclassified images reveals that this classification does in fact make sense in the overall scope of the algorithms used, where in some cases it was even difficult to classify by the images by human examination. Some of the training errors in the 1 versus 7 classification are illustrated in Figure 4.
 
@@ -417,7 +417,7 @@ This analysis was conducted for both normalized data and not normalized data. In
 
 \subsection{Gaussian RBF SVM}
 
-We additionally investigated the classification accuracy of the Gaussian RBF SVM on the MNIST dataset with selection of hyperparameters through validation. Here, $C$ was selected from possible $C$ values of $[0.2, 0.4, 0.6, 0.8, 1]$ and $\gamma$ was selected from possible values of $[0.5, 1, 5, 10]$. For each of the pairwise classification tasks presented previously when evaluating the MNIST data using logistic regression and a linear SVM, optimal values for $C$ and $\gamma$ for the Gaussian RBF SVM were selected. These sets of hyperparameters were each associated with a classification error rate in the testing dataset. These results are presented in Table 6. \\
+We additionally investigated the classification accuracy of the Gaussian RBF SVM on the MNIST dataset with selection of hyperparameters through validation. Here, $C$ was selected from possible $C$ values of $[0.2, 0.4, 0.6, 0.8, 1]$ and $\gamma$ was selected from possible values of $[0.5, 1, 5, 10]$. For each of the pairwise classification tasks presented previously when evaluating the MNIST data using logistic regression and a linear SVM, optimal values for $C$ and $\gamma$ for the Gaussian RBF SVM were selected. These sets of hyperparameters were each associated with a classification error rate in the testing dataset. These results are presented in Table 6.
 
 \begin{table}
   \begin{center}
@@ -437,9 +437,9 @@ As seen previously with logistic regression and the linear SVM, normalization of
 
 \subsection{Pegasos}
 
-Comparing the linear and Gaussian SVMs with Pegasos, we can evaluate all algorithms based on classification accuracy as well as performance. Pegasos generally ran with slightly improved accuracies over the linear SVM and logistic regression, with error rates of $0.007, 0.057,$ and $0.043$ for 1 vs. 7, 3 vs. 5, and 4 vs. 9, respectively. The accuracies across most of the algorithms were therefore extremely comparable, with the exception of the Gaussian kernel SVM which ran with 0\% testing error. \\
+Comparing the linear and Gaussian SVMs with Pegasos, we can evaluate all algorithms based on classification accuracy as well as performance. Pegasos generally ran with slightly improved accuracies over the linear SVM and logistic regression, with error rates of $0.007, 0.057,$ and $0.043$ for 1 vs. 7, 3 vs. 5, and 4 vs. 9, respectively. The accuracies across most of the algorithms were therefore extremely comparable, with the exception of the Gaussian kernel SVM which ran with 0\% testing error.
 
-The performance in terms of runtime was additionally investigated for each of these algorithsm. These runtimes, presented in seconds, is summarized in Table 7. Note that here, we have chosen the 4 vs. 9 classification task to examine in more detail, but the results from this dataset should generalize well to other classification tasks including 1 vs. 7, 3 vs. 5, and even vs. odd. \\
+The performance in terms of runtime was additionally investigated for each of these algorithsm. These runtimes, presented in seconds, is summarized in Table 7. Note that here, we have chosen the 4 vs. 9 classification task to examine in more detail, but the results from this dataset should generalize well to other classification tasks including 1 vs. 7, 3 vs. 5, and even vs. odd.
 
 \begin{table}
   \begin{center}
@@ -455,7 +455,7 @@ The performance in terms of runtime was additionally investigated for each of th
   \caption{Runtimes of classification algorithms}
 \end{table}
 
-The above numbers for Pegasos are under the parameters where $\lambda = 2^{-10}$ and $max\_epochs = 100$. The runtime of Pegasos is dependent upon the values for these parameters however, and increasing the maximum number of epochs would accordingly increase the runtime of the algorithm. This follows directly from the implementation of the algorithm, in which a greater number of epochs results in more iterations of the for loop, thereby increasing the runtime of the algorithm. Similarly, as the value of $\lambda$ increased, the runtime of the overall algorithm increased. This is because the step size is inversely proportional with the value of $\lambda$. Thus, at small values of $\lambda$, the step size is larger, and we thus approach the margin more quickly. If this is the case, then fewer computation steps are required and thus, a faster runtime is associated with a smaller value of $\lambda$. \\
+The above numbers for Pegasos are under the parameters where $\lambda = 2^{-10}$ and $max\_epochs = 100$. The runtime of Pegasos is dependent upon the values for these parameters however, and increasing the maximum number of epochs would accordingly increase the runtime of the algorithm. This follows directly from the implementation of the algorithm, in which a greater number of epochs results in more iterations of the for loop, thereby increasing the runtime of the algorithm. Similarly, as the value of $\lambda$ increased, the runtime of the overall algorithm increased. This is because the step size is inversely proportional with the value of $\lambda$. Thus, at small values of $\lambda$, the step size is larger, and we thus approach the margin more quickly. If this is the case, then fewer computation steps are required and thus, a faster runtime is associated with a smaller value of $\lambda$.
 
 Overall, it seems that logistic regression and Pegasos present the ideal balance in the tradeoff between runtime and classification accuracy. While the Gaussian SVM had a perfect classification accuracy, the algorithm required more than 30 times longer to run to completion compared with Pegasos, with this factor increasing as the number of training samples increased. On the other side of the spectrum, the logistic regression ran fastest out of all the algorithms, although it had slightly worse accuracy compared with Pegasos and the Gaussian SVM. Thus, depending on the needs of the system, both logistic regression and Pegasos present algorithms which maintain acceptable classification accuracy while remaining scalable to large datasets with many features.
 
